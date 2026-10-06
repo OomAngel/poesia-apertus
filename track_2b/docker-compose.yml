@@ -1,0 +1,39 @@
+# make run: the model (Ollama) and the page (PoesIA) on this machine; see README.md.
+name: poesia-apertus
+services:
+  ollama:
+    image: ollama/ollama:0.34.4
+    profiles: [local]
+    volumes:
+      - ollama:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      retries: 30
+
+  model:
+    # One-shot: downloads the model on the first run only, then exits.
+    build: ./src/ollama
+    profiles: [local]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    restart: "no"
+
+  web:
+    build: ./src
+    depends_on:
+      model:
+        condition: service_completed_successfully
+        required: false
+    environment:
+      LLM_BASE_URL: ${LLM_BASE_URL:-http://ollama:11434/v1}
+      LLM_NAME: ${LLM_NAME:-poesia-apertus}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+    ports:
+      - "127.0.0.1:8000:8000"
+
+volumes:
+  ollama:
