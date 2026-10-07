@@ -26,11 +26,14 @@ browser ──► PoesIA page (FastAPI, port 8000) ──► scansion engine (de
                     └──── OpenAI-compatible API ──► Ollama ──► Apertus v1.5 8B text (GGUF Q4_K_M)
 ```
 
-- **Page** (`poesia.webapp`): every line is a text field the author fills; each line is
-  scanned as they type (`/api/scan`); proposals come from `/api/propose`, ranked by the
-  scan, not by model likelihood, and shown greyed until used or edited. Each line records
-  its origin (written / suggestion used / suggestion edited); "Keep" downloads the poem with
-  the statement "N of M lines worded by the author". Drafts live in the browser tab only.
+- **Page** (`poesia.webapp`): one language per session (es, en, it) and four steps (what
+  moved you → the form → write → listen and keep). Every line is a text field the author
+  fills, scanned as they type (`/api/scan`) and shown as syllables (*la·LU·na‿i·lu·MI·na*).
+  "Ideas" first offers common words that rhyme with the line's partner, from offline word
+  lists, each with why it fits (`/api/words`); whole lines from Apertus come only on a second
+  click (`/api/propose`), ranked by the scan, not by model likelihood, and shown greyed until
+  used or edited. Each line records its origin; "Keep" saves text, a printable page or a file
+  to reopen, with the statement "N of M lines worded by the author". Drafts live in the tab.
 - **Engine** (`poesia` package, Spanish, English and Italian): metrical syllable count with
   synalepha and final-stress rules, stress pattern, rhyme key; explanations from
   `poesia.teaching`. Forms on the page: Spanish *soneto*, English Shakespearean sonnet,
@@ -38,19 +41,22 @@ browser ──► PoesIA page (FastAPI, port 8000) ──► scansion engine (de
 - **Read-back**: Piper, offline, three stock voices with clear licences (es CC0, en public
   domain, it CC BY 4.0: *Serena*, from rhasspy/piper-voices), labelled "synthetic voice"; no
   cloning.
-- **Linking**: 3,000 poems per language from public-domain and CC BY sources (credits in
-  `data/linking/README.md`), matched by `bge-m3` embeddings on CPU, offered only on request.
+- **Linking**: 3,000 poems each for es and en and 609 for it (Project Gutenberg books
+  fetched for this purpose), all public domain or CC BY (credits in
+  `data/linking/README.md`), matched by `bge-m3` embeddings on CPU, offered after writing.
 - **Model**: Apertus v1.5 8B text backbone, served by Ollama 0.34.4.
 
 ### Target architecture
 
 **a) On-premise and b) air-gapped.** Everything runs on one machine, bound to
-`127.0.0.1`. Build time needs the network: Python packages, NLTK data and the engine are
-baked into the page image; the first `make run` downloads the model (~5 GB) into a Docker
-volume. Runtime needs none: we ran the page image with `--network none` (scan, rhyme of an
-out-of-dictionary word, safety screen all work) and the model from the volume.
-The same stack also runs with no GPU (timings in section 5). *(to do: a full `make run`
-with the host network disconnected.)*
+`127.0.0.1`. `run.sh` / `run.ps1` (or plain `docker compose up`) start Ollama and the page;
+on first run the page downloads and prepares the models itself and shows the progress, and
+says when the model runs on the processor. For a machine with no network, `bundle.sh` packs
+both images and the prepared models (9.6 GB, with checksums) and `load.sh` / `load.ps1`
+restore them; tested by deleting images and models, restoring, and running on a Docker
+network with no route out (page, scan, safety, read-back, linking and suggestions all
+answered), and on Windows PowerShell 5.1. Without Docker, `run-native.sh` / `.ps1` start the
+page with only the Ollama app and uv installed (no compiler, no git).
 
 ## 3. Use of Apertus
 
@@ -119,19 +125,30 @@ optimistic; the set is a regression test, not a validation.
 
 | | RTX 3070 8 GB | CPU only (Ryzen 9 5900X, Docker Desktop) |
 |---|---|---|
+| rhyme words (offline word lists) | <0.2 s | <0.6 s |
 | a suggestion (6 candidates generated, best 3 shown) | 1.4–5 s | 13–15 s |
 | safety screen | <1 s | 2.0 s |
 | linking (embed + search) | 3.1 s | 3.2 s |
 | first suggestion after `make run` (model preloaded) | 1.9 s | — |
 
-A fully automatic sonnet (the benchmark loop) takes ~35 s on the GPU. Energy, GPU board only
+CPU-only memory with everything loaded: 7.3 GB. A fully automatic sonnet (the benchmark
+loop) takes ~35 s on the GPU. Energy, GPU board only
 (`nvidia-smi` once a second over 18 Italian sonnets): ~160 W while generating, **1.7 Wh per
 automatic sonnet**; a single on-request suggestion (~2 s) is under 0.1 Wh.
 
-**Accessibility and robustness** (ux-audit, our own browser-driven audit library): the five
-page-level layers pass (positive control: its broken fixture is flagged); a reload keeps the
-reflection and the lines; every button is reachable by keyboard. One defect found and fixed:
-changing the form cleared the lines without asking.
+**Accessibility and robustness** (ux-audit, our own browser-driven audit library, and
+Playwright): the five page-level layers pass (positive control: its broken fixture is
+flagged); a reload keeps the reflection and the lines; every button is reachable by keyboard;
+the safety pause opens on its heading, keeps Tab inside, closes with Escape and returns focus.
+Defects found and fixed: changing the form cleared the lines without asking; and revealing
+the next stanza redrew the page 350 ms after typing, so fast typing on line 2 went into
+line 1 (reproduced on the old code, "y el v" left in line 2).
+
+**Model server.** Same GGUF and card, through the page's own client: llama.cpp's server
+(b11459) scores the same as Ollama within run-to-run noise (es 84% vs 84% metre, en 92% vs
+89%, it 85% vs 83%), answers a three-line suggestion in 0.63 s vs 1.05 s, and its image is
+2.59 GB (0.31 GB CPU-only) vs 3.75 GB. We keep Ollama for this entry (switching would cost
+the first-run progress screen and its tests) and plan the switch after it.
 
 **Linking:** for "I saw a tree losing its leaves and thought of my father, who died in March"
 the page offers Dickinson, Barrett Browning and Millay ("Listen, children: / Your father is
@@ -156,16 +173,25 @@ in the way.)*
   annotated endecasillabi (Dante, Petrarca; mean error 0.23); unmarked *sdruccioli* and
   dialefe are its main misses.
 - Some proposals still mix languages (an English word in a Spanish poem).
+- Seeded runs do not reproduce exactly on Ollama (4 of 7 Italian sonnets differed between
+  two runs with the same seeds), so benchmark differences of a few points are noise.
+- Italian rhyme-word suggestions leave out longer words whose stress the engine cannot be
+  sure of, so fewer are offered than in Spanish or English.
+- Ollama 0.40.0 on Windows 11 25H2 with Developer Mode cannot read models it pulls
+  ("untrusted mount point"); there the no-Docker start fails with that message, and the
+  Docker start works.
 - The safety screen is small, synthetic and same-author; it says nothing about slang,
   irony or Swiss German dialect. PoesIA makes no therapeutic claim.
 
 ## 7. Reproducibility
 
 - Hardware: RTX 3070 8 GB, Ryzen 9 5900X, Windows 11 + WSL2, Docker Desktop 29.8.
-- Engine: `OomAngel/poesia` at commit `95bd03b` (pinned in `src/Dockerfile`).
+- Engine: `OomAngel/poesia` at the commit pinned in `src/Dockerfile` (`POESIA_REF`).
 - Model: GGUF as in section 3; Ollama 0.34.4.
 - Benchmark: `scripts/evaluate_adapter_mlflow.py --ollama-model <name> --samples 3 --seed 0`
-  in the engine repository; safety: `scripts/evaluate_safety_screen.py`.
+  (or `--openai-compat` for any endpoint, as the page calls it) in the engine repository;
+  server comparison: `reports/eval_2026-10/p2-server-comparison.json`; safety:
+  `scripts/evaluate_safety_screen.py`.
 
 ## 8. Before and during the hackathon
 
@@ -173,14 +199,18 @@ The engine predates the hackathon: PoesIA's scansion, rhyme and generation loop 
 from July 2026 (first commit 2026-07-26) and are open source. Built during the hackathon
 (1–16 Oct): this repository and its Docker deployment; the writing page; the safety screen
 and its test set; Apertus integration (runtime, chat format, the system-message fix, the
-OpenAI-compatible client); the Apertus evaluation; and fixes found on the way (English
-rhyme keys, model selection, offline NLTK). The engine repository's history shows the dates.
+OpenAI-compatible client); the Apertus evaluation; the guided page, rhyme-word suggestions
+and Italian scansion view; first-run setup, the offline bundle and the no-Docker start; the
+Italian linking set; and fixes found on the way (English rhyme keys, model selection,
+offline NLTK, focus while typing). The engine repository's history shows the dates.
 
 ## 9. Next steps
 
-German and French scansion; Italian proposals measured like Spanish and English; fine-tuning Apertus on public-domain verse in the five
-languages, kept only if it beats plain Apertus on this benchmark; the photo and spoken
-reflection on Apertus's own image and audio input, on a card with room for it.
+German and French scansion and page languages; moving the model server to llama.cpp;
+short phrase suggestions between words and whole lines; fine-tuning Apertus on
+public-domain verse in the five languages, kept only if it beats plain Apertus on this
+benchmark; the photo and spoken reflection on Apertus's own image and audio input, on a card
+with room for it.
 
 ## License
 
