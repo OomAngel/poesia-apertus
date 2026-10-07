@@ -3,7 +3,7 @@ FROM python:3.13-slim
 
 # The engine: OomAngel/poesia (MIT), pinned to the commit this entry was tested with.
 # g++ only to build editdistance (g2p_en), which has no wheel for Python 3.13; removed after.
-ARG POESIA_REF=6afa9fb46dd65b67f9d454394630456e4474bcda
+ARG POESIA_REF=fabbd68dfeb336eaccbf663b112d671a4113fda4
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git g++ \
  && rm -rf /var/lib/apt/lists/* \
@@ -32,6 +32,10 @@ for rel in ("es/es_ES/davefx/medium/es_ES-davefx-medium.onnx",
         urllib.request.urlretrieve(url, dest)
 PY
 RUN python -c "from poesia.webapp import read_aloud; print(len(read_aloud('Prueba', 'es')), len(read_aloud('Test', 'en')))"
+
+# Linking index: public-domain / openly licensed poems and their bge-m3 vectors (data/linking).
+COPY data/linking /opt/linking
+ENV POESIA_LINK_INDEX=/opt/linking
 
 RUN useradd --create-home poet
 USER poet

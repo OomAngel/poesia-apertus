@@ -1,0 +1,11 @@
+{
+  "model": "poesia-embed",
+  "languages": [
+    "es",
+    "en"
+  ],
+  "seed": 0,
+  "per_language": 3000,
+  "max_lines": 24,
+  "built_from": "corpus_master (docs/CORPUS_SOURCES.md)"
+}

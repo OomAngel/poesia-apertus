@@ -4,6 +4,8 @@ services:
   ollama:
     image: ollama/ollama:0.34.4
     profiles: [local]
+    environment:
+      OLLAMA_KEEP_ALIVE: 24h  # keep Apertus in memory between suggestions
     volumes:
       - ollama:/root/.ollama
     healthcheck:
@@ -23,7 +25,9 @@ services:
     restart: "no"
 
   web:
-    build: ./src
+    build:
+      context: .
+      dockerfile: src/Dockerfile
     depends_on:
       model:
         condition: service_completed_successfully
@@ -32,6 +36,8 @@ services:
       LLM_BASE_URL: ${LLM_BASE_URL:-http://ollama:11434/v1}
       LLM_NAME: ${LLM_NAME:-poesia-apertus}
       LLM_API_KEY: ${LLM_API_KEY:-}
+      EMBED_BASE_URL: ${EMBED_BASE_URL:-${LLM_BASE_URL:-http://ollama:11434/v1}}
+      EMBED_NAME: ${EMBED_NAME:-poesia-embed}
     ports:
       - "127.0.0.1:8000:8000"
 
