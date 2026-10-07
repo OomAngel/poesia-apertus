@@ -1,0 +1,10 @@
+# Angel's rule (2026-10-06): no commit names Claude or Anthropic as author or committer, or
+# carries a Co-Authored-By naming them, a Claude-Session trailer or a "Generated with Claude
+# Code" line. Install once per clone: pre-commit install -t commit-msg
+# (commit-msg only: a pre-push hook the repo may have stays untouched).
+default_install_hook_types: [commit-msg]
+repos:
+  - repo: https://github.com/OomAngel/pre-commit-hooks
+    rev: v1.3.1
+    hooks:
+      - id: no-ai-attribution
