@@ -15,6 +15,7 @@ The project lives in [`track_2b/`](track_2b/) (template layout):
 | `track_2b/docker-compose.yml` | Ollama (Apertus) and the PoesIA page, which sets up the models on first run |
 | `track_2b/src/` | the page image |
 | `track_2b/bundle.sh`, `load.sh`, `load.ps1` | pack and restore everything for a machine without network |
+| `track_2b/run-native.sh`, `run-native.ps1` | start without Docker (Ollama app + uv) |
 | `track_2b/technical_report.md` | architecture, evaluation, limitations |
 | `track_2b/README.md` | the organisers' Track 2B description, unchanged |
 
@@ -40,6 +41,29 @@ page starts:
 ```bash
 LLM_BASE_URL=https://.../v1 LLM_NAME=<apertus model id> LLM_API_KEY=... ./run.sh
 ```
+
+### Without Docker
+
+With only the [Ollama app](https://ollama.com/download) and
+[uv](https://docs.astral.sh/uv/getting-started/installation/) installed (uv brings its own
+Python; no compiler is needed), from `track_2b/`:
+
+| System | Command |
+|---|---|
+| Windows (PowerShell) | `.\run-native.ps1` |
+| Linux, macOS | `./run-native.sh` |
+
+The browser opens http://localhost:8000. The first run installs the page (~230 MB), fetches
+the read-back voices (~290 MB) into your user data folder, and the page downloads the models
+into Ollama with the same progress screen as the Docker version. Ollama uses the GPU by itself
+when there is one.
+
+Known issue (2026-10-07): on Windows 11 25H2 with Developer Mode on, Ollama 0.40.0 cannot read
+the models it has just downloaded ("The path cannot be traversed because it contains an
+untrusted mount point"; it stores new model names as symbolic links, which Windows then
+refuses to follow). The page shows that message and stops. On such a machine use the Docker
+commands above. Tested on Linux with uv's Python and no compiler, and on Windows with the
+page, voices and linking working against Ollama in Docker.
 
 ### Without network
 
