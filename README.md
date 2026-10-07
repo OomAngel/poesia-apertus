@@ -12,7 +12,7 @@ The project lives in [`track_2b/`](track_2b/) (template layout):
 | Path | What it is |
 |---|---|
 | `track_2b/Makefile` | `make run` starts the model and the page in Docker |
-| `track_2b/docker-compose.yml` | Ollama (Apertus), a one-shot model setup, the PoesIA page |
+| `track_2b/docker-compose.yml` | Ollama (Apertus) and the PoesIA page, which sets up the models on first run |
 | `track_2b/src/` | the page image and the Ollama model definition |
 | `track_2b/technical_report.md` | architecture, evaluation, limitations |
 | `track_2b/README.md` | the organisers' Track 2B description, unchanged |
@@ -40,8 +40,15 @@ page starts:
 LLM_BASE_URL=https://.../v1 LLM_NAME=<apertus model id> LLM_API_KEY=... ./run.sh
 ```
 
-Requirements: Docker with Compose v2. An NVIDIA GPU with 6 GB or more is used when available;
-without one the model runs on CPU (a suggestion takes about 15 s instead of 2).
+Requirements:
+
+- Docker with Compose v2.
+- 8 GB of free memory (16 GB in the machine): measured 7.3 GB in use with everything loaded
+  (Apertus 5.7 GB, the embedding model 1.2 GB, the page 0.34 GB).
+- About 17 GB of free disk: the Ollama image 9.3 GB, the models 6.2 GB, the page image 0.6 GB.
+- Optional: an NVIDIA GPU with 6 GB or more free. Without one, or when another program holds
+  part of it, the model runs wholly or partly on the processor and a suggestion takes about
+  15 s instead of 2; the page says so instead of slowing down silently.
 
 ## Credits
 
