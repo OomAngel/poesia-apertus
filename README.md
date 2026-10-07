@@ -34,6 +34,16 @@ Requirements: Docker with Compose v2. An NVIDIA GPU with 6 GB or more is used wh
 has the NVIDIA runtime; without one the model runs on CPU (slow: suggestions take tens of
 seconds). After the first run no network is needed.
 
+## Credits
+
+- Model: Apertus v1.5 8B (Swiss AI Initiative), text backbone by Andreas Martin
+  (`andreasmartin/apertus-v1.5-8b-text`), GGUF conversion `Colby/apertus-v1.5-8b-text-Q4_K_M-GGUF`.
+- Embeddings: BAAI `bge-m3` (MIT).
+- Voices (Piper, rhasspy/piper-voices): Spanish *davefx* (CC0), English *LJ Speech* (public
+  domain), Italian *Serena* (CC BY 4.0).
+- Poems offered by the page: see `track_2b/data/linking/README.md` (public domain, CC0, and
+  DISCO, CC BY 4.0).
+
 ## Licence
 
 Apache-2.0 (this repository). The engine, [PoesIA](https://github.com/OomAngel/poesia), is

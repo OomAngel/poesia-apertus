@@ -3,7 +3,7 @@ FROM python:3.13-slim
 
 # The engine: OomAngel/poesia (MIT), pinned to the commit this entry was tested with.
 # g++ only to build editdistance (g2p_en), which has no wheel for Python 3.13; removed after.
-ARG POESIA_REF=fabbd68dfeb336eaccbf663b112d671a4113fda4
+ARG POESIA_REF=95bd03b7e0f69b35465e356bf1c394f6daa94f3f
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git g++ \
  && rm -rf /var/lib/apt/lists/* \
@@ -17,21 +17,22 @@ RUN python -c "import nltk; [nltk.download(p, download_dir='/usr/share/nltk_data
  && python -c "from poesia.webapp import scan_line; print(scan_line('La luna vierte su silencio blanco', 'es', 'soneto', 0, [])['syllables'], scan_line('The restless sea in endless rhythm rolls', 'en', 'sonnet_shakespearean', 0, [])['syllables'])"
 
 # Read-back voices (Piper, offline), from rhasspy/piper-voices at a fixed revision:
-# es_ES-davefx-medium (CC0) and en_US-ljspeech-medium (public domain).
+# es_ES-davefx-medium (CC0), en_US-ljspeech-medium (public domain), it_IT-serena-medium (CC BY 4.0).
 ARG VOICES_REV=c10ece1aade47bb51c153c893d14e5bf8e5b7117
 ENV POESIA_PIPER_VOICES=/opt/piper
 RUN python - <<'PY'
 import os, urllib.request
 rev = os.environ["VOICES_REV"]  # build ARGs are visible to RUN as environment variables
 for rel in ("es/es_ES/davefx/medium/es_ES-davefx-medium.onnx",
-            "en/en_US/ljspeech/medium/en_US-ljspeech-medium.onnx"):
+            "en/en_US/ljspeech/medium/en_US-ljspeech-medium.onnx",
+            "it/it_IT/serena/medium/it_IT-serena-medium.onnx"):
     for suffix in ("", ".json"):
         dest = f"/opt/piper/{rel}{suffix}"
         os.makedirs(os.path.dirname(dest), exist_ok=True)
         url = f"https://huggingface.co/rhasspy/piper-voices/resolve/{rev}/{rel}{suffix}"
         urllib.request.urlretrieve(url, dest)
 PY
-RUN python -c "from poesia.webapp import read_aloud; print(len(read_aloud('Prueba', 'es')), len(read_aloud('Test', 'en')))"
+RUN python -c "from poesia.webapp import read_aloud; print([len(read_aloud(t, l)) for t, l in (('Prueba', 'es'), ('Test', 'en'), ('Prova', 'it'))])"
 
 # Linking index: public-domain / openly licensed poems and their bge-m3 vectors (data/linking).
 COPY data/linking /opt/linking

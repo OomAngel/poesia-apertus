@@ -31,11 +31,13 @@ browser ──► PoesIA page (FastAPI, port 8000) ──► scansion engine (de
   scan, not by model likelihood, and shown greyed until used or edited. Each line records
   its origin (written / suggestion used / suggestion edited); "Keep" downloads the poem with
   the statement "N of M lines worded by the author". Drafts live in the browser tab only.
-- **Engine** (`poesia` package, Spanish and English): metrical syllable count with
+- **Engine** (`poesia` package, Spanish, English and Italian): metrical syllable count with
   synalepha and final-stress rules, stress pattern, rhyme key; explanations from
-  `poesia.teaching`.
-- **Read-back**: Piper, offline, two stock voices with clear licences (es CC0, en public
-  domain), labelled "synthetic voice"; no cloning.
+  `poesia.teaching`. Forms on the page: Spanish *soneto*, English Shakespearean sonnet,
+  Italian *sonetto*, haiku.
+- **Read-back**: Piper, offline, three stock voices with clear licences (es CC0, en public
+  domain, it CC BY 4.0: *Serena*, from rhasspy/piper-voices), labelled "synthetic voice"; no
+  cloning.
 - **Linking**: 3,000 poems per language from public-domain and CC BY sources (credits in
   `data/linking/README.md`), matched by `bge-m3` embeddings on CPU, offered only on request.
 - **Model**: Apertus v1.5 8B text backbone, served by Ollama 0.34.4.
@@ -140,8 +142,10 @@ in the way.)*
   0.48, biased low), so metre differences of a few points are within its error.
 - Rhyme is checked on the last word only (consonant rhyme); assonance and internal rhyme
   are not scored.
-- Scansion covers Spanish and English; Italian, German and French are not done; Romansh has
-  no scansion.
+- Scansion covers Spanish, English and Italian; German and French are not done; Romansh has
+  no scansion. Italian counting agrees exactly with expert scansion on 79.5% of 10,001
+  annotated endecasillabi (Dante, Petrarca; mean error 0.23); unmarked *sdruccioli* and
+  dialefe are its main misses.
 - Some proposals still mix languages (an English word in a Spanish poem).
 - The safety screen is small, synthetic and same-author; it says nothing about slang,
   irony or Swiss German dialect. PoesIA makes no therapeutic claim.
@@ -149,7 +153,7 @@ in the way.)*
 ## 7. Reproducibility
 
 - Hardware: RTX 3070 8 GB, Ryzen 9 5900X, Windows 11 + WSL2, Docker Desktop 29.8.
-- Engine: `OomAngel/poesia` at commit `fabbd68` (pinned in `src/Dockerfile`).
+- Engine: `OomAngel/poesia` at commit `95bd03b` (pinned in `src/Dockerfile`).
 - Model: GGUF as in section 3; Ollama 0.34.4.
 - Benchmark: `scripts/evaluate_adapter_mlflow.py --ollama-model <name> --samples 3 --seed 0`
   in the engine repository; safety: `scripts/evaluate_safety_screen.py`.
@@ -165,7 +169,7 @@ rhyme keys, model selection, offline NLTK). The engine repository's history show
 
 ## 9. Next steps
 
-Italian, German and French scansion; fine-tuning Apertus on public-domain verse in the five
+German and French scansion; Italian proposals measured like Spanish and English; fine-tuning Apertus on public-domain verse in the five
 languages, kept only if it beats plain Apertus on this benchmark; the photo and spoken
 reflection on Apertus's own image and audio input, on a card with room for it.
 
