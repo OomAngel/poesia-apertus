@@ -41,7 +41,7 @@ The `data/` directory must not exceed 100 MB.
 ❗️ Submissions are not handled on Devpost but via this URL only:
 http://hackapertus.ch/online-hack/submissions
 
-The submission must: 
+The submission must:
 1. follow the template repo and include all prerequisite files and definitions
 2. follow the specified input/output formats
 3. run in a Docker container, launched with `make run` from the root of the project
@@ -71,7 +71,7 @@ Submitted datasets must comply with our guidelines for responsibly sourced datas
 - Upload your dataset. It should consist of the following components:
     - evaluation dataset (i.e. individual test cases)
     - model response dataset (i.e. the model response to each test case)
-    - metadata file (i.e. additional information about each test case; where relevant, this file must contain instance-level licensing information) 
+    - metadata file (i.e. additional information about each test case; where relevant, this file must contain instance-level licensing information)
 - Make sure your dataset access control is set to PUBLIC
 - Provide the URL of _your_ data set
 
