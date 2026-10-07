@@ -1,14 +1,22 @@
-# PoesIA writing page (poesia.webapp) with the Spanish and English scansion engines.
-FROM python:3.13-slim
+# PoesIA writing page (poesia.webapp) with the Spanish, English and Italian scansion engines.
 
+# Build stage: wheels only. git and g++ (editdistance, via g2p_en, has no wheel for
+# Python 3.13) never reach the final image.
+FROM python:3.13-slim AS build
 # The engine: OomAngel/poesia (MIT), pinned to the commit this entry was tested with.
-# g++ only to build editdistance (g2p_en), which has no wheel for Python 3.13; removed after.
-ARG POESIA_REF=95bd03b7e0f69b35465e356bf1c394f6daa94f3f
+ARG POESIA_REF=c29d9bd502ea56359b00269f69277a8a1f6d1d4b
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git g++ \
- && rm -rf /var/lib/apt/lists/* \
- && pip install --no-cache-dir "poesia[web,spanish,english,recitation] @ git+https://github.com/OomAngel/poesia@${POESIA_REF}" \
- && apt-get purge -y git g++ && apt-get autoremove -y
+ && rm -rf /var/lib/apt/lists/*
+# english-scan, not english: the latter adds prosodic (planned, unused) and ~450 MB with it.
+RUN pip wheel --no-cache-dir --wheel-dir /wheels \
+    "poesia[web,spanish,english-scan,recitation] @ git+https://github.com/OomAngel/poesia@${POESIA_REF}"
+
+FROM python:3.13-slim
+# The wheels are mounted for the install, not copied: a copied-then-deleted layer still ships.
+RUN --mount=type=bind,from=build,source=/wheels,target=/wheels \
+    pip install --no-cache-dir --no-index --find-links /wheels \
+    "poesia[web,spanish,english-scan,recitation]"
 
 # Bake everything the scanners fetch on first use, so the container needs no network:
 # NLTK data for g2p_en (English words CMUdict lacks), and one scan per language.
