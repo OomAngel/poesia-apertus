@@ -15,7 +15,7 @@ page where the person writes every line; Apertus v1.5 8B proposes lines only on 
 and a deterministic engine checks syllables, stress and rhyme against the chosen form and
 explains each problem in plain language. A safety screen runs before any shaping. On a
 seeded benchmark of 36 sonnets (18 Spanish, 18 English) Apertus behind the engine writes
-82% (es) and 89% (en) of lines in exact metre, the best of the five setups we measured,
+83–85% (es) and 87–90% (en) of lines in exact metre, the best of the setups we measured,
 running on one 8 GB consumer GPU with no network.
 
 ## 2. Architecture
@@ -91,10 +91,12 @@ seeds for every row; all rows scored by the same engine version.
 | Qwen3-4B + corpus adapter | 0.38 | 71% | 24% | 0.46 | 75% | 40% |
 | Apertus 8B, raw prompt (transformers) | 0.83 | 60% | 41% | 0.73 | 77% | 83% |
 | **Apertus 8B, Ollama, line system message** | 0.42 | **82%** | **44%** | **0.29** | **89%** | 83% |
-| same, plus dropping one- and two-word candidates | **0.28** | **85%** | 33% | 0.37 | 87% | **86%** |
+| same, plus dropping one- and two-word candidates | 0.28 | **85%** | 33% | 0.37 | 87% | 86% |
+| same, plus re-asking without the word bank when a batch is all bare words | **0.21** | 83% | 36% | **0.10** | **90%** | **88%** |
 
-The last two rows differ by less than their seed noise (single poems range from 0% to 100%
-rhyme), so we report both rather than pick. The benchmark's Spanish rhyme word bank comes
+The last three rows differ by about their seed noise in metre and Spanish rhyme (single
+poems range from 0% to 100% rhyme), so we report all three. What the last change clearly
+did: lines that were only a rhyme word went from 9 (es) and 5 (en) to none. The benchmark's Spanish rhyme word bank comes
 from an online service (Datamuse); the deployed page sends none, so it runs offline.
 
 **Safety screen** (risk recall on 20, false alarms on 40 safe):
