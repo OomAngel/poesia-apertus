@@ -106,8 +106,16 @@ from an online service (Datamuse); the deployed page sends none, so it runs offl
 The phrase list and the test set were written by the same hand, so the tuned numbers are
 optimistic; the set is a regression test, not a validation.
 
-**Speed:** a suggestion takes 1–5 s on the RTX 3070; a fully automatic sonnet (the benchmark)
-~35 s. *(to do: CPU-only timing and watts per poem.)*
+**Speed** (same `make run` stack):
+
+| | RTX 3070 8 GB | CPU only (Ryzen 9 5900X, Docker Desktop) |
+|---|---|---|
+| a suggestion (6 candidates generated, best 3 shown) | 1.4–5 s | 13–15 s |
+| safety screen | <1 s | 2.0 s |
+| linking (embed + search) | 3.1 s | 3.2 s |
+| first suggestion after `make run` (model preloaded) | 1.9 s | — |
+
+A fully automatic sonnet (the benchmark loop) takes ~35 s on the GPU. *(to do: watts per poem.)*
 
 **Accessibility and robustness** (ux-audit, our own browser-driven audit library): the five
 page-level layers pass (positive control: its broken fixture is flagged); a reload keeps the
