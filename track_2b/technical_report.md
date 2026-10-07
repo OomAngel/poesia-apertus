@@ -13,10 +13,10 @@ People write when something moves them, and many would like to shape it into a p
 form is hard to learn and AI writing tools take the words away from them. PoesIA is a local
 page where the person writes every line; Apertus v1.5 8B proposes lines only on request,
 and a deterministic engine checks syllables, stress and rhyme against the chosen form and
-explains each problem in plain language. A safety screen runs before any shaping. On a
-seeded benchmark of 36 sonnets (18 Spanish, 18 English) Apertus behind the engine writes
-83–85% (es) and 87–90% (en) of lines in exact metre, the best of the setups we measured,
-running on one 8 GB consumer GPU with no network.
+explains each problem in plain language, in Spanish, English and Italian. A safety screen
+runs before any shaping. On a seeded benchmark of sonnets (18 per language) Apertus behind
+the engine writes 83–85% (es), 87–90% (en) and 87% (it) of lines in exact metre, the best of
+the setups we measured, on one 8 GB consumer GPU with no network.
 
 ## 2. Architecture
 
@@ -49,7 +49,8 @@ browser ──► PoesIA page (FastAPI, port 8000) ──► scansion engine (de
 baked into the page image; the first `make run` downloads the model (~5 GB) into a Docker
 volume. Runtime needs none: we ran the page image with `--network none` (scan, rhyme of an
 out-of-dictionary word, safety screen all work) and the model from the volume.
-*(to do: full `make run` with the host network disconnected, and on a CPU-only server.)*
+The same stack also runs with no GPU (timings in section 5). *(to do: a full `make run`
+with the host network disconnected.)*
 
 ## 3. Use of Apertus
 
