@@ -94,6 +94,10 @@ seeds for every row; all rows scored by the same engine version.
 | same, plus dropping one- and two-word candidates | 0.28 | **85%** | 33% | 0.37 | 87% | 86% |
 | same, plus re-asking without the word bank when a batch is all bare words | **0.21** | 83% | 36% | **0.10** | **90%** | **88%** |
 
+**Italian** (Petrarchan *sonetto*, 11 syllables, ABBA ABBA CDE CDE; same harness, 6 themes ×
+3 seeds, Apertus via Ollama with the retry): **0.16 off per line, 87% of lines in metre, 43%
+of rhyme pairs**.
+
 The last three rows differ by about their seed noise in metre and Spanish rhyme (single
 poems range from 0% to 100% rhyme), so we report all three. What the last change clearly
 did: lines that were only a rhyme word went from 9 (es) and 5 (en) to none. The benchmark's Spanish rhyme word bank comes
@@ -119,7 +123,9 @@ optimistic; the set is a regression test, not a validation.
 | linking (embed + search) | 3.1 s | 3.2 s |
 | first suggestion after `make run` (model preloaded) | 1.9 s | — |
 
-A fully automatic sonnet (the benchmark loop) takes ~35 s on the GPU. *(to do: watts per poem.)*
+A fully automatic sonnet (the benchmark loop) takes ~35 s on the GPU. Energy, GPU board only
+(`nvidia-smi` once a second over 18 Italian sonnets): ~160 W while generating, **1.7 Wh per
+automatic sonnet**; a single on-request suggestion (~2 s) is under 0.1 Wh.
 
 **Accessibility and robustness** (ux-audit, our own browser-driven audit library): the five
 page-level layers pass (positive control: its broken fixture is flagged); a reload keeps the
