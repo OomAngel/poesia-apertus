@@ -4,7 +4,7 @@ FROM python:3.13-slim
 # The engine: OomAngel/poesia (MIT), pinned to the commit this entry was tested with. Every
 # dependency has a wheel or is pure Python (checked 2026-10-07 with the compiler disabled),
 # and the archive URL needs no git, so the image needs no build tools at all.
-ARG POESIA_REF=fc9dd5ba60553d033b3537fff2af8402fe0fc39e
+ARG POESIA_REF=182c0aa0da040002794b45eb3e1a47ca88f6c0d0
 # english-scan, not english: the latter adds prosodic (planned, unused) and ~450 MB with it.
 RUN pip install --no-cache-dir \
     "poesia[web,spanish,english-scan,recitation] @ https://github.com/OomAngel/poesia/archive/${POESIA_REF}.zip"

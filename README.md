@@ -97,6 +97,9 @@ Requirements:
 - Model: Apertus v1.5 8B (Swiss AI Initiative), text backbone by Andreas Martin
   (`andreasmartin/apertus-v1.5-8b-text`), GGUF conversion `Colby/apertus-v1.5-8b-text-Q4_K_M-GGUF`.
 - Embeddings: BAAI `bge-m3` (MIT).
+- Rhyme-word suggestions: word lists derived from [wordfreq](https://github.com/rspeer/wordfreq)
+  3.1.1 by Robyn Speer and contributors (data CC BY-SA 4.0; the derived lists in the engine's
+  `src/poesia/wordlists/` keep that licence).
 - Voices (Piper, rhasspy/piper-voices): Spanish *davefx* (CC0), English *LJ Speech* (public
   domain), Italian *Serena* (CC BY 4.0).
 - Poems offered by the page: see `track_2b/data/linking/README.md` (public domain, CC0, and
