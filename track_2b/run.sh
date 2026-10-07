@@ -4,9 +4,16 @@
 #   ./run.sh -d         same, in the background (stop with: docker compose down)
 # With your own Apertus endpoint (OpenAI-compatible) instead of the local model:
 #   LLM_BASE_URL=https://.../v1 LLM_NAME=<model> LLM_API_KEY=... ./run.sh
+# On a machine with no network, after ./load.sh (bundle.sh made the bundle):
+#   ./run.sh --offline  uses the loaded images and models; builds and downloads nothing
 set -eu
 cd "$(dirname "$0")"
 DOCKER="${DOCKER:-docker}"
+build="--build"
+if [ "${1:-}" = "--offline" ]; then
+  shift
+  build="--pull never"
+fi
 files="-f docker-compose.yml"
 if "$DOCKER" info --format '{{json .Runtimes}}' 2>/dev/null | grep -q nvidia; then
   files="$files -f docker-compose.gpu.yml"
@@ -29,8 +36,8 @@ if [ -n "${LLM_BASE_URL:-}" ]; then
     echo "POESIA_SETUP_OLLAMA=off"  # no local model to prepare
   } > .env.run
   # shellcheck disable=SC2086
-  "$DOCKER" compose --env-file .env.run $files up --build --no-deps "$@" web
+  "$DOCKER" compose --env-file .env.run $files up $build --no-deps "$@" web
   exit $?
 fi
 # shellcheck disable=SC2086
-exec "$DOCKER" compose $files up --build "$@"
+exec "$DOCKER" compose $files up $build "$@"

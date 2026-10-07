@@ -13,7 +13,8 @@ The project lives in [`track_2b/`](track_2b/) (template layout):
 |---|---|
 | `track_2b/Makefile` | `make run` starts the model and the page in Docker |
 | `track_2b/docker-compose.yml` | Ollama (Apertus) and the PoesIA page, which sets up the models on first run |
-| `track_2b/src/` | the page image and the Ollama model definition |
+| `track_2b/src/` | the page image |
+| `track_2b/bundle.sh`, `load.sh`, `load.ps1` | pack and restore everything for a machine without network |
 | `track_2b/technical_report.md` | architecture, evaluation, limitations |
 | `track_2b/README.md` | the organisers' Track 2B description, unchanged |
 
@@ -39,6 +40,23 @@ page starts:
 ```bash
 LLM_BASE_URL=https://.../v1 LLM_NAME=<apertus model id> LLM_API_KEY=... ./run.sh
 ```
+
+### Without network
+
+For a machine with no internet (a classroom, a library), pack everything once on a machine
+that has run PoesIA, then carry the folder over (about 10 GB):
+
+| Step | Linux, macOS, WSL | Windows (PowerShell) |
+|---|---|---|
+| on the connected machine | `./bundle.sh` (writes `poesia-bundle/`) | from WSL or Git Bash: `./bundle.sh` |
+| on the offline machine, inside the copied folder | `./load.sh`, then `./run.sh --offline` | `.\load.ps1`, then `.\run.ps1 -Offline` |
+
+`load` checks the files against their checksums, loads the two images and restores the
+prepared models; `--offline` starts without building or downloading anything. Tested
+2026-10-07 by deleting the images and models, restoring from the folder, and running on a
+Docker network with no route out: the page reached "ready" and scanning, safety, read-back,
+linking and suggestions all answered. The Windows steps were tested the same day from a
+copy in `C:\Temp` with Windows PowerShell 5.1.
 
 Requirements:
 

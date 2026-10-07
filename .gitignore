@@ -25,3 +25,6 @@ build/
 .DS_Store
 .idea/
 .vscode/
+
+# Offline bundle (bundle.sh)
+poesia-bundle/
