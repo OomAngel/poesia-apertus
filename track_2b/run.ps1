@@ -18,6 +18,7 @@ $up = @("compose") + $files + @("up", "--build")
 if ($Detach) { $up += "-d" }
 if ($env:LLM_BASE_URL) {
     Write-Host "Using the endpoint in LLM_BASE_URL; the local model is not started."
+    $env:POESIA_SETUP_OLLAMA = "off"  # no local model to prepare
     $up += @("--no-deps", "web")
 }
 & docker @up

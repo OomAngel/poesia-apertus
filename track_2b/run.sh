@@ -21,10 +21,13 @@ if [ -n "${LLM_BASE_URL:-}" ]; then
   # private to this user, git-ignored (.env.*), and removed when this script exits.
   umask 077
   trap 'rm -f .env.run' EXIT INT TERM
-  for v in LLM_BASE_URL LLM_NAME LLM_API_KEY EMBED_BASE_URL EMBED_NAME EMBED_API_KEY; do
-    eval "val=\${$v:-}"
-    [ -n "$val" ] && printf '%s=%s\n' "$v" "$val"
-  done > .env.run
+  {
+    for v in LLM_BASE_URL LLM_NAME LLM_API_KEY EMBED_BASE_URL EMBED_NAME EMBED_API_KEY; do
+      eval "val=\${$v:-}"
+      [ -n "$val" ] && printf '%s=%s\n' "$v" "$val"
+    done
+    echo "POESIA_SETUP_OLLAMA=off"  # no local model to prepare
+  } > .env.run
   # shellcheck disable=SC2086
   "$DOCKER" compose --env-file .env.run $files up --build --no-deps "$@" web
   exit $?

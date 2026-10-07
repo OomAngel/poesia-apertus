@@ -1,8 +1,0 @@
-# Apertus v1.5 8B, text backbone (andreasmartin/apertus-v1.5-8b-text), GGUF Q4_K_M.
-# Chat format from llama.cpp models/templates/Apertus-8B-Instruct.jinja, thinking off.
-FROM hf.co/Colby/apertus-v1.5-8b-text-Q4_K_M-GGUF:Q4_K_M
-TEMPLATE """{{- if .System }}<|system_start|>{{ .System }}<|system_end|>{{- else }}<|system_start|>You are Apertus, a helpful assistant created by the SwissAI initiative.<|system_end|>{{- end }}<|developer_start|>Deliberation: disabled
-Tool Capabilities: disabled<|developer_end|>{{- range .Messages }}{{- if eq .Role "user" }}<|user_start|>{{ .Content }}<|user_end|>{{- else if eq .Role "assistant" }}<|assistant_start|>{{ .Content }}<|assistant_end|>{{- end }}{{- end }}<|assistant_start|>"""
-PARAMETER stop "<|assistant_end|>"
-PARAMETER stop "<|user_start|>"
-PARAMETER num_ctx 4096

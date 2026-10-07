@@ -14,30 +14,23 @@ services:
       interval: 5s
       retries: 30
 
-  model:
-    # One-shot: downloads the model on the first run only, then exits.
-    build: ./src/ollama
-    depends_on:
-      ollama:
-        condition: service_healthy
-    environment:
-      OLLAMA_HOST: http://ollama:11434
-    restart: "no"
-
   web:
     build:
       context: .
       dockerfile: src/Dockerfile
     depends_on:
-      model:
-        condition: service_completed_successfully
-        required: false
+      ollama:
+        condition: service_healthy
+        required: false  # absent when the page runs against your own endpoint
     environment:
       LLM_BASE_URL: ${LLM_BASE_URL:-http://ollama:11434/v1}
       LLM_NAME: ${LLM_NAME:-poesia-apertus}
       LLM_API_KEY: ${LLM_API_KEY:-}
       EMBED_BASE_URL: ${EMBED_BASE_URL:-${LLM_BASE_URL:-http://ollama:11434/v1}}
       EMBED_NAME: ${EMBED_NAME:-poesia-embed}
+      # First run: the page pulls and prepares the models on this Ollama and shows progress.
+      # "off" with your own endpoint (run.sh / run.ps1 set it).
+      POESIA_SETUP_OLLAMA: ${POESIA_SETUP_OLLAMA:-http://ollama:11434}
     ports:
       - "127.0.0.1:8000:8000"
 

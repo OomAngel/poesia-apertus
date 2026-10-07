@@ -4,7 +4,7 @@
 # Python 3.13) never reach the final image.
 FROM python:3.13-slim AS build
 # The engine: OomAngel/poesia (MIT), pinned to the commit this entry was tested with.
-ARG POESIA_REF=ed65f90568e9e2bcae205ae7ee88131ad0c21e24
+ARG POESIA_REF=352ca8beaff35fb6c5a182b6fa5472fe28af613f
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git g++ \
  && rm -rf /var/lib/apt/lists/*

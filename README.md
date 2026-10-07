@@ -28,8 +28,9 @@ From `track_2b/`, one command; the GPU is used when Docker has the NVIDIA runtim
 | with `make` | `make run` |
 | CPU only, plain Docker | `docker compose up` |
 
-Then open http://localhost:8000. The first run downloads the model (~5 GB) and the
-embedding model (~1.2 GB) once; after that no network is needed. Add `-d` (`-Detach` in
+Then open http://localhost:8000. The page opens at once; on the first run it downloads the
+model (~5 GB) and the embedding model (~1.2 GB) and shows the progress. You can start writing
+meanwhile; suggestions switch on when the model is ready. After that no network is needed. Add `-d` (`-Detach` in
 PowerShell) to run in the background; stop with `docker compose down` (`make stop`).
 
 With an existing Apertus endpoint instead of the local model (OpenAI-compatible API), only the
