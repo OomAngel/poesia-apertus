@@ -19,20 +19,28 @@ The project lives in [`track_2b/`](track_2b/) (template layout):
 
 ## Run it
 
+From `track_2b/`, one command; the GPU is used when Docker has the NVIDIA runtime:
+
+| System | Command |
+|---|---|
+| Windows (PowerShell) | `.\run.ps1` |
+| Linux, macOS, WSL | `./run.sh` |
+| with `make` | `make run` |
+| CPU only, plain Docker | `docker compose up` |
+
+Then open http://localhost:8000. The first run downloads the model (~5 GB) and the
+embedding model (~1.2 GB) once; after that no network is needed. Add `-d` (`-Detach` in
+PowerShell) to run in the background; stop with `docker compose down` (`make stop`).
+
+With an existing Apertus endpoint instead of the local model (OpenAI-compatible API), only the
+page starts:
+
 ```bash
-cd track_2b
-make run          # first run downloads Apertus (~5 GB GGUF); then open http://localhost:8000
+LLM_BASE_URL=https://.../v1 LLM_NAME=<apertus model id> LLM_API_KEY=... ./run.sh
 ```
 
-With an existing Apertus endpoint instead of the local model (OpenAI-compatible API):
-
-```bash
-LLM_BASE_URL=https://.../v1 LLM_NAME=<apertus model id> LLM_API_KEY=... make run
-```
-
-Requirements: Docker with Compose v2. An NVIDIA GPU with 6 GB or more is used when Docker
-has the NVIDIA runtime; without one the model runs on CPU (a suggestion takes about 15 s
-instead of 2). After the first run no network is needed.
+Requirements: Docker with Compose v2. An NVIDIA GPU with 6 GB or more is used when available;
+without one the model runs on CPU (a suggestion takes about 15 s instead of 2).
 
 ## Credits
 

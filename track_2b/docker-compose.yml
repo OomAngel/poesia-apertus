@@ -1,9 +1,10 @@
-# make run: the model (Ollama) and the page (PoesIA) on this machine; see README.md.
+# `docker compose up` (CPU) or ./run.sh / .\run.ps1 / make run (GPU when available): the model
+# (Ollama) and the page (PoesIA) on this machine. With your own Apertus endpoint:
+# LLM_BASE_URL=... docker compose up --no-deps web. See README.md.
 name: poesia-apertus
 services:
   ollama:
     image: ollama/ollama:0.34.4
-    profiles: [local]
     environment:
       OLLAMA_KEEP_ALIVE: 24h  # keep Apertus in memory between suggestions
     volumes:
@@ -16,7 +17,6 @@ services:
   model:
     # One-shot: downloads the model on the first run only, then exits.
     build: ./src/ollama
-    profiles: [local]
     depends_on:
       ollama:
         condition: service_healthy
