@@ -34,6 +34,10 @@ browser ──► PoesIA page (FastAPI, port 8000) ──► scansion engine (de
 - **Engine** (`poesia` package, Spanish and English): metrical syllable count with
   synalepha and final-stress rules, stress pattern, rhyme key; explanations from
   `poesia.teaching`.
+- **Read-back**: Piper, offline, two stock voices with clear licences (es CC0, en public
+  domain), labelled "synthetic voice"; no cloning.
+- **Linking**: 3,000 poems per language from public-domain and CC BY sources (credits in
+  `data/linking/README.md`), matched by `bge-m3` embeddings on CPU, offered only on request.
 - **Model**: Apertus v1.5 8B text backbone, served by Ollama 0.34.4.
 
 ### Target architecture
@@ -85,8 +89,11 @@ seeds for every row; all rows scored by the same engine version.
 | Qwen3-4B + corpus adapter | 0.38 | 71% | 24% | 0.46 | 75% | 40% |
 | Apertus 8B, raw prompt (transformers) | 0.83 | 60% | 41% | 0.73 | 77% | 83% |
 | **Apertus 8B, Ollama, line system message** | 0.42 | **82%** | **44%** | **0.29** | **89%** | 83% |
+| same, plus dropping one- and two-word candidates | **0.28** | **85%** | 33% | 0.37 | 87% | **86%** |
 
-*(to do: the row with the fragment filter, run 2026-10-07.)*
+The last two rows differ by less than their seed noise (single poems range from 0% to 100%
+rhyme), so we report both rather than pick. The benchmark's Spanish rhyme word bank comes
+from an online service (Datamuse); the deployed page sends none, so it runs offline.
 
 **Safety screen** (risk recall on 20, false alarms on 40 safe):
 
@@ -101,6 +108,20 @@ optimistic; the set is a regression test, not a validation.
 
 **Speed:** a suggestion takes 1–5 s on the RTX 3070; a fully automatic sonnet (the benchmark)
 ~35 s. *(to do: CPU-only timing and watts per poem.)*
+
+**Accessibility and robustness** (ux-audit, our own browser-driven audit library): the five
+page-level layers pass (positive control: its broken fixture is flagged); a reload keeps the
+reflection and the lines; every button is reachable by keyboard. One defect found and fixed:
+changing the form cleared the lines without asking.
+
+**Linking:** for "I saw a tree losing its leaves and thought of my father, who died in March"
+the page offers Dickinson, Barrett Browning and Millay ("Listen, children: / Your father is
+dead."); for the Spanish version, Rosalía de Castro ("Moría el sol, y las marchitas hojas").
+
+**Image and audio (official multimodal weights, 4-bit, same card):** an image described in
+2.2 s ("cats, remote controls, pink couch", correct) and a Spanish voice clip transcribed in
+1.5 s with one word wrong (*parte* for *padre*); 7.5 GB of 8 GB reserved, so it is not in the
+default deployment.
 
 **People:** *(to do: 2–3 tester sessions — did you finish, does it feel like yours, what got
 in the way.)*
@@ -120,7 +141,7 @@ in the way.)*
 ## 7. Reproducibility
 
 - Hardware: RTX 3070 8 GB, Ryzen 9 5900X, Windows 11 + WSL2, Docker Desktop 29.8.
-- Engine: `OomAngel/poesia` at commit `c0037fb` (pinned in `src/Dockerfile`).
+- Engine: `OomAngel/poesia` at commit `fabbd68` (pinned in `src/Dockerfile`).
 - Model: GGUF as in section 3; Ollama 0.34.4.
 - Benchmark: `scripts/evaluate_adapter_mlflow.py --ollama-model <name> --samples 3 --seed 0`
   in the engine repository; safety: `scripts/evaluate_safety_screen.py`.
@@ -137,8 +158,8 @@ rhyme keys, model selection, offline NLTK). The engine repository's history show
 ## 9. Next steps
 
 Italian, German and French scansion; fine-tuning Apertus on public-domain verse in the five
-languages, kept only if it beats plain Apertus on this benchmark; read-back with an offline
-synthetic voice; linking each poem to public-domain poems on the same feeling.
+languages, kept only if it beats plain Apertus on this benchmark; the photo and spoken
+reflection on Apertus's own image and audio input, on a card with room for it.
 
 ## License
 
