@@ -125,7 +125,7 @@ optimistic; the set is a regression test, not a validation.
 
 | | RTX 3070 8 GB | CPU only (Ryzen 9 5900X, Docker Desktop) |
 |---|---|---|
-| rhyme words (offline word lists) | <0.2 s | <0.6 s |
+| rhyme words (word lists, no model) | ≤0.6 s first per language, then instant | same |
 | a suggestion (6 candidates generated, best 3 shown) | 1.4–5 s | 13–15 s |
 | safety screen | <1 s | 2.0 s |
 | linking (embed + search) | 3.1 s | 3.2 s |
