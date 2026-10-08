@@ -203,8 +203,11 @@ in the way.)*
   are not scored.
 - Scansion covers Spanish, English and Italian; German and French are not done; Romansh has
   no scansion. Italian counting agrees exactly with expert scansion on 79.5% of 10,001
-  annotated endecasillabi (Dante, Petrarca; mean error 0.23); unmarked *sdruccioli* and
-  dialefe are its main misses.
+  annotated endecasillabi (Dante, Petrarca; mean error 0.23); dialefe is its main miss.
+  Word stress comes from Wiktionary for 44,272 words (unmarked *sdruccioli* such as
+  *crescita*, *tavola*): agreement with the experts' stresses rose from 80.2% to 82.3%
+  (precision 90.0% to 92.3%); an attempt to take stress from Apertus 70B failed (about half
+  wrong).
 - Some proposals still mix languages (an English word in a Spanish poem).
 - Seeded runs do not reproduce exactly on Ollama (4 of 7 Italian sonnets differed between
   two runs with the same seeds), so benchmark differences of a few points are noise.
