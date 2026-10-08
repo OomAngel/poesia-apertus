@@ -143,14 +143,16 @@ only **78 of 280 risk texts (28%)**, missing passive death wishes ("better not t
 and indirect signs. The model question and phrase list were widened on that set and tested
 on a second, held-out set written before the change (708 agreed items):
 
-| Held-out set, model question on full-precision 8B | before | after |
-|---|---|---|
-| risk texts caught | 92 / 271 (34%) | **125 / 271 (46%)** |
-| plain death wishes / indirect signs | 52 / 104, 3 / 60 | 75 / 104, 17 / 60 |
-| false alarms on safe texts | 6 / 437 | **4 / 437** |
+| Held-out set (708 items) | before, full precision | after, full precision | after, 6-bit Q6_K | after, 4-bit Q4_K_M (shipped) |
+|---|---|---|---|---|
+| risk texts caught | 92 / 271 (34%) | **125 / 271 (46%)** | **129 / 271 (48%)** | 109 / 271 (40%) |
+| plain death wishes / indirect signs | 52 / 104, 3 / 60 | 75 / 104, 17 / 60 | 76 / 104, 19 / 60 | 66 / 104, 14 / 60 |
+| false alarms on safe texts | 6 / 437 | **4 / 437** | 4 / 437 | 2 / 437 |
 
-The model question alone, on the 60 items: 4-bit 13/20 with the old wording and 18/20 with
-the new one; 6-bit and full precision 19/20 (old wording). The screen is a safety net that
+Full precision ran on CSCS, the two GGUF files on a Hugging Face Jobs L4 (llama.cpp). The
+model question alone on the held-out set: 6-bit 111/271, 4-bit 84/271; on the 60 items 6-bit
+20/20, 4-bit 18/20 (13/20 with the old wording). The 4-bit file loses about a sixth of the
+screen's catches, a second reason, after Italian metre, to prefer 6-bit. The screen is a safety net that
 still misses about half of these texts, not a guarantee; the pause itself says PoesIA is a
 writing tool, not a counselling service.
 
