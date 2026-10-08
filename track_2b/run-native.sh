@@ -7,7 +7,7 @@
 set -eu
 cd "$(dirname "$0")"
 # The engine at the commit this entry was tested with (same as src/Dockerfile).
-POESIA_REF=31ab5ec5bd442fcdfb961abfb3510a6077ddc970
+POESIA_REF=12b5ed3036620999f7769426ea811b7419e93476
 command -v uvx >/dev/null || {
   echo "uv is missing. Install it with:  curl -LsSf https://astral.sh/uv/install.sh | sh" >&2
   exit 1
