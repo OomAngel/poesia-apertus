@@ -1,7 +1,7 @@
 # PoesIA on Apertus
 
 Hack Apertus 2026, Track 2B (own project). A private, on-premise page for letting things out
-in poetry, in Spanish, English and Italian: the person writes what they felt and shapes it into a poem line by line, in their
+in poetry, in Spanish, English, Italian, German and French: the person writes what they felt and shapes it into a poem line by line, in their
 own words. Apertus v1.5 8B proposes only when asked; a deterministic engine counts syllables,
 stress and rhyme and explains them; the person decides and stays the author. A safety screen
 pauses the poem and shows Swiss support services when a reflection signals risk. Nothing
@@ -101,7 +101,9 @@ Requirements:
   3.1.1 by Robyn Speer and contributors (data CC BY-SA 4.0; the derived lists in the engine's
   `src/poesia/wordlists/` keep that licence).
 - Voices (Piper, rhasspy/piper-voices): Spanish *davefx* (CC0), English *LJ Speech* (public
-  domain), Italian *Serena* (CC BY 4.0).
+  domain), Italian *Serena* (CC BY 4.0), German *Thorsten* (CC0), French *SIWIS* (CC BY 4.0).
+- German and French word stress and verb classes: Wiktionary via kaikki.org (CC BY-SA 4.0;
+  the derived tables in the engine's `src/poesia/phonology/data/` keep that licence).
 - Poems offered by the page: see `track_2b/data/linking/README.md` (public domain, CC0, and
   DISCO, CC BY 4.0).
 

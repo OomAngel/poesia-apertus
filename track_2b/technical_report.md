@@ -13,7 +13,7 @@ People write when something moves them, and many would like to shape it into a p
 form is hard to learn and AI writing tools take the words away from them. PoesIA is a local
 page where the person writes every line; Apertus v1.5 8B proposes lines only on request,
 and a deterministic engine checks syllables, stress and rhyme against the chosen form and
-explains each problem in plain language, in Spanish, English and Italian. A safety screen
+explains each problem in plain language, in Spanish, English, Italian, German and French. A safety screen
 runs before any shaping. On a seeded benchmark of sonnets (18 per language) Apertus behind
 the engine writes 83–85% (es), 87–90% (en) and 87% (it) of lines in exact metre, the best of
 the setups we measured, on one 8 GB consumer GPU with no network.
@@ -26,7 +26,7 @@ browser ──► PoesIA page (FastAPI, port 8000) ──► scansion engine (de
                     └──── OpenAI-compatible API ──► Ollama ──► Apertus v1.5 8B text (GGUF Q4_K_M)
 ```
 
-- **Page** (`poesia.webapp`): one language per session (es, en, it) and four steps (what
+- **Page** (`poesia.webapp`): one language per session (es, en, it, de, fr) and four steps (what
   moved you → the form → write → listen and keep). Every line is a text field the author
   fills, scanned as they type (`/api/scan`) and shown as syllables (*la·LU·na‿i·lu·MI·na*).
   "Ideas" first offers common words that rhyme with the line's partner, from offline word
@@ -34,14 +34,14 @@ browser ──► PoesIA page (FastAPI, port 8000) ──► scansion engine (de
   click (`/api/propose`), ranked by the scan, not by model likelihood, and shown greyed until
   used or edited. Each line records its origin; "Keep" saves text, a printable page or a file
   to reopen, with the statement "N of M lines worded by the author". Drafts live in the tab.
-- **Engine** (`poesia` package, Spanish, English and Italian): metrical syllable count with
-  synalepha and final-stress rules, stress pattern, rhyme key; explanations from
+- **Engine** (`poesia` package, five languages): metrical syllable count with synalepha,
+  mute-e and final-stress rules, stress pattern, rhyme key by sound; explanations from
   `poesia.teaching`. Forms on the page: Spanish *soneto*, English Shakespearean sonnet,
-  Italian *sonetto*, haiku.
-- **Read-back**: Piper, offline, three stock voices with clear licences (es CC0, en public
-  domain, it CC BY 4.0: *Serena*, from rhasspy/piper-voices), labelled "synthetic voice"; no
-  cloning.
-- **Linking**: 3,000 poems each for es and en and 609 for it (Project Gutenberg books
+  Italian *sonetto*, German *Sonett*, French sonnet in alexandrines, haiku, free verse.
+- **Read-back**: Piper, offline, five stock voices with clear licences (es and de CC0, en
+  public domain, it and fr CC BY 4.0, from rhasspy/piper-voices), labelled "synthetic
+  voice"; no cloning.
+- **Linking**: 3,000 poems each for es and en, 609 it, 676 de, 547 fr (Project Gutenberg books
   fetched for this purpose), all public domain or CC BY (credits in
   `data/linking/README.md`), matched by `bge-m3` embeddings on CPU, offered after writing.
 - **Model**: Apertus v1.5 8B text backbone, served by Ollama 0.34.4.
@@ -215,8 +215,11 @@ in the way.)*
   0.48, biased low), so metre differences of a few points are within its error.
 - Rhyme is checked on the last word only (consonant rhyme); assonance and internal rhyme
   are not scored.
-- Scansion covers Spanish, English and Italian; German and French are not done; Romansh has
-  no scansion. Italian counting agrees exactly with expert scansion on 79.5% of 10,001
+- German and French (added 9 Oct): syllables agree with expert annotation on 99.1% of 3,507
+  German lines (word stress on a stressed position 94.7%) and 95.9% of 72,412 French verses
+  (alexandrines 97.5%); the rules were tuned on these same sets. French rhyme by sound agrees
+  with eSpeak NG on 98.4% of frequent line endings. Apertus's proposals in German and French
+  are not benchmarked yet. Romansh has no scansion. Italian counting agrees exactly with expert scansion on 79.5% of 10,001
   annotated endecasillabi (Dante, Petrarca; mean error 0.23); dialefe is its main miss.
   Word stress comes from Wiktionary for 44,272 words (unmarked *sdruccioli* such as
   *crescita*, *tavola*): agreement with the experts' stresses rose from 80.2% to 82.3%
@@ -254,8 +257,8 @@ from July 2026 (first commit 2026-07-26) and are open source. Built during the h
 (1–16 Oct): this repository and its Docker deployment; the writing page; the safety screen
 and its test set; Apertus integration (runtime, chat format, the system-message fix, the
 OpenAI-compatible client); the Apertus evaluation; the guided page, rhyme-word suggestions
-and Italian scansion view; first-run setup, the offline bundle and the no-Docker start; the
-Italian linking set; the CSCS and Hugging Face Jobs evaluations, the model-written safety
+and Italian scansion view; German and French (scanners, page, voices, linking); first-run
+setup, the offline bundle and the no-Docker start; the Italian linking set; the CSCS and Hugging Face Jobs evaluations, the model-written safety
 sets and the retuned screen; and fixes found on the way (English rhyme keys, model selection,
 offline NLTK, focus while typing). The engine repository's history shows the dates.
 

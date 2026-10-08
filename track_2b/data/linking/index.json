@@ -3,7 +3,9 @@
   "languages": [
     "es",
     "en",
-    "it"
+    "it",
+    "de",
+    "fr"
   ],
   "seed": 0,
   "per_language": 3000,

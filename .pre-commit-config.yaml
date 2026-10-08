@@ -18,6 +18,8 @@ repos:
       - id: check-case-conflict
       - id: check-added-large-files
         args: [--maxkb=1000]
+        # The linking vectors (float16, 1-6 MB) are needed by the Docker build (COPY data/linking).
+        exclude: ^track_2b/data/linking/vectors_[a-z]+\.npy$
       - id: check-yaml
       - id: check-json
       - id: end-of-file-fixer
