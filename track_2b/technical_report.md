@@ -58,6 +58,12 @@ network with no route out (page, scan, safety, read-back, linking and suggestion
 answered), and on Windows PowerShell 5.1. Without Docker, `run-native.sh` / `.ps1` start the
 page with only the Ollama app and uv installed (no compiler, no git).
 
+**c) Swiss sovereign cloud.** The same page runs unchanged against the CSCS LLM Inference API
+(`LLM_BASE_URL=https://api.inference.cscs.ch/v1`, with the operator's own key): a
+three-line suggestion took 0.73 s on Apertus v1.5 8B and 0.99 s on the 70B (median of 10).
+CSCS states that it does not record prompts or responses and that data stays in its
+infrastructure in Switzerland: an option for a canton or hospital without GPUs of its own.
+
 ## 3. Use of Apertus
 
 - **Model:** `andreasmartin/apertus-v1.5-8b-text` (the official `swiss-ai/Apertus-v1.5-8B`
@@ -110,16 +116,43 @@ poems range from 0% to 100% rhyme), so we report all three. What the last change
 did: lines that were only a rhyme word went from 9 (es) and 5 (en) to none. The benchmark's Spanish rhyme word bank comes
 from an online service (Datamuse); the deployed page sends none, so it runs offline.
 
-**Safety screen** (risk recall on 20, false alarms on 40 safe):
+**Model size and precision** (CSCS API for full precision and the 70B; llama.cpp on the
+RTX 3070 and again on a Hugging Face Jobs L4 for the local files; 36 seeded sonnets per
+language and setup, 72 for full precision; share of lines in exact metre / rhyme pairs):
 
-| | before tuning | after adding conjugated forms |
+| Apertus v1.5 | es | en | it |
+|---|---|---|---|
+| 8B full precision (CSCS) | 84.5% / 39% | 92.2% / 83% | 89.3% / 53% |
+| 70B full precision (CSCS) | 77.2% / 46% | 95.8% / 83% | 82.1% / 48% |
+| 8B 6-bit Q6_K (3070; L4) | 89.5; 88.9% / 41; 48% | 94.2; 92.1% / 82; 89% | 92.3; 91.3% / 61; 52% |
+| 8B 4-bit Q4_K_M, shipped (3070; L4) | 85.9; 83.3% / 40; 38% | 91.5; 90.5% / 88; 85% | 84.7; 86.5% / 44; 34% |
+
+Behind the engine the 70B is not better (Spanish and Italian metre are lower by about three
+standard errors), so the entry stays on the 8B. The 4-bit file loses Italian metre and rhyme
+on both machines; 6-bit matches full precision and fits an 8 GB card (7.2 GB). Metre
+replicates across machines within about two points; rhyme moves by up to ten points
+between identical runs, and seeds do not reproduce single sonnets on any server.
+
+**Safety screen.** On the author's own 60 items (20 risk, 40 safe) the screen reached 20/20
+with no false alarms, but phrase list and items were written by the same hand. An
+independent set (`data/safety/generated/`) was therefore written by Apertus 70B on CSCS:
+1,043 short reflections in five languages and seven categories, including idioms about
+dying, past distress and indirect warning signs, each then classified by the same model
+with a different question; 724 items where writer and judge agree. On them the screen caught
+only **78 of 280 risk texts (28%)**, missing passive death wishes ("better not to wake up")
+and indirect signs. The model question and phrase list were widened on that set and tested
+on a second, held-out set written before the change (708 agreed items):
+
+| Held-out set, model question on full-precision 8B | before | after |
 |---|---|---|
-| phrase list | 11/20, 0/40 | 19/20, 0/40 |
-| Apertus yes/no | 13/20, 0/40 | (not tuned) |
-| either (the screen) | 18/20, 0/40 | 20/20, 0/40 |
+| risk texts caught | 92 / 271 (34%) | **125 / 271 (46%)** |
+| plain death wishes / indirect signs | 52 / 104, 3 / 60 | 75 / 104, 17 / 60 |
+| false alarms on safe texts | 6 / 437 | **4 / 437** |
 
-The phrase list and the test set were written by the same hand, so the tuned numbers are
-optimistic; the set is a regression test, not a validation.
+The model question alone, on the 60 items: 4-bit 13/20 with the old wording and 18/20 with
+the new one; 6-bit and full precision 19/20 (old wording). The screen is a safety net that
+still misses about half of these texts, not a guarantee; the pause itself says PoesIA is a
+writing tool, not a counselling service.
 
 **Speed** (same `make run` stack):
 
@@ -180,8 +213,9 @@ in the way.)*
 - Ollama 0.40.0 on Windows 11 25H2 with Developer Mode cannot read models it pulls
   ("untrusted mount point"); there the no-Docker start fails with that message, and the
   Docker start works.
-- The safety screen is small, synthetic and same-author; it says nothing about slang,
-  irony or Swiss German dialect. PoesIA makes no therapeutic claim.
+- The safety screen caught 46% of risk texts on the held-out model-written set. Those texts
+  were written and labelled by a model, not reviewed by a person, and say nothing about
+  slang, irony or Swiss German dialect. PoesIA makes no therapeutic claim.
 
 ## 7. Reproducibility
 
@@ -191,7 +225,10 @@ in the way.)*
 - Benchmark: `scripts/evaluate_adapter_mlflow.py --ollama-model <name> --samples 3 --seed 0`
   (or `--openai-compat` for any endpoint, as the page calls it) in the engine repository;
   server comparison: `reports/eval_2026-10/p2-server-comparison.json`; safety:
-  `scripts/evaluate_safety_screen.py`.
+  `scripts/evaluate_safety_screen.py [--data …] [--agreed-only]`; test-set writer:
+  `scripts/generate_safety_set.py`; quantisation on Hugging Face Jobs:
+  `scripts/hf_jobs/quant_eval.sh`; every CSCS batch with its cost and result:
+  `docs/hack_apertus/CSCS_USAGE.md` (59,650 requests, CHF 0.44 in two days).
 
 ## 8. Before and during the hackathon
 
@@ -201,7 +238,8 @@ from July 2026 (first commit 2026-07-26) and are open source. Built during the h
 and its test set; Apertus integration (runtime, chat format, the system-message fix, the
 OpenAI-compatible client); the Apertus evaluation; the guided page, rhyme-word suggestions
 and Italian scansion view; first-run setup, the offline bundle and the no-Docker start; the
-Italian linking set; and fixes found on the way (English rhyme keys, model selection,
+Italian linking set; the CSCS and Hugging Face Jobs evaluations, the model-written safety
+sets and the retuned screen; and fixes found on the way (English rhyme keys, model selection,
 offline NLTK, focus while typing). The engine repository's history shows the dates.
 
 ## 9. Next steps
@@ -211,6 +249,13 @@ short phrase suggestions between words and whole lines; fine-tuning Apertus on
 public-domain verse in the five languages, kept only if it beats plain Apertus on this
 benchmark; the photo and spoken reflection on Apertus's own image and audio input, on a card
 with room for it.
+
+## Acknowledgements
+
+The Hack Apertus organisers passed on a CSCS inference key after a late request and gave
+Hugging Face credits; the size, precision and safety findings above come from them. Thanks
+to CSCS for the inference service, to the Swiss AI Initiative for Apertus, and to Andreas
+Martin for the text-only model.
 
 ## License
 
