@@ -156,6 +156,18 @@ screen's catches, a second reason, after Italian metre, to prefer 6-bit. The scr
 still misses about half of these texts, not a guarantee; the pause itself says PoesIA is a
 writing tool, not a counselling service.
 
+**What the pause can and cannot claim** (literature check, over 100 sources, engine repository
+`docs/research/reports/`). *Supported:* people report two to four times more suicidal thoughts
+when answers are anonymous and carry no consequences. PoesIA runs locally and reports nothing,
+which keeps it on that side. *Not supported:* that writing itself, or poetry, makes people more
+honest than a conversation with a clinician (untested for poetry; written and spoken disclosure
+were equal in a 94-study meta-analysis), or that the pause detects risk better than clinicians.
+No screen, clinical or automated, predicts suicide well at real base rates. *Not supported
+either:* treating anger or a wish for revenge as danger. Such thoughts are common and rarely
+lead to violence; threat assessment looks for stated intent, a plan or final-act language.
+The pause is therefore a safety net, not detection or screening for risk; wording that claimed
+detection would also make it a medical device under the EU MDR and Swiss MedDO.
+
 **Speed** (same `make run` stack):
 
 | | RTX 3070 8 GB | CPU only (Ryzen 9 5900X, Docker Desktop) |
