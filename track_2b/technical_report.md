@@ -218,14 +218,18 @@ in the way.)*
 - German and French (added 9 Oct): syllables agree with expert annotation on 99.1% of 3,507
   German lines (word stress on a stressed position 94.7%) and 95.9% of 72,412 French verses
   (alexandrines 97.5%); the rules were tuned on these same sets. French rhyme by sound agrees
-  with eSpeak NG on 98.4% of frequent line endings. Apertus's proposals in German and French
-  are not benchmarked yet. Romansh has no scansion. Italian counting agrees exactly with expert scansion on 79.5% of 10,001
+  with eSpeak NG on 98.4% of frequent line endings. Behind the engine (36 sonnets each) the
+  8B writes 80–85% (de) and 86–93% (fr) of lines in exact metre (4-bit to full precision);
+  the 70B 95% (de) and 85% (fr). Romansh has no scansion. Italian counting agrees exactly with expert scansion on 79.5% of 10,001
   annotated endecasillabi (Dante, Petrarca; mean error 0.23); dialefe is its main miss.
   Word stress comes from Wiktionary for 44,272 words (unmarked *sdruccioli* such as
   *crescita*, *tavola*): agreement with the experts' stresses rose from 80.2% to 82.3%
   (precision 90.0% to 92.3%); an attempt to take stress from Apertus 70B failed (about half
   wrong).
-- Some proposals still mix languages (an English word in a Spanish poem).
+- The 8B slips into English: 10–22% of benchmark lines in Italian, German and French (under 2%
+  in Spanish), at full precision as in the 4- and 6-bit files; the 70B 1–2%. Metre scores count
+  those lines too. The page ranks proposals in another language last, and flags any line that
+  looks like another language.
 - Seeded runs do not reproduce exactly on Ollama (4 of 7 Italian sonnets differed between
   two runs with the same seeds), so benchmark differences of a few points are noise.
 - Italian rhyme-word suggestions leave out longer words whose stress the engine cannot be
@@ -248,7 +252,7 @@ in the way.)*
   `scripts/evaluate_safety_screen.py [--data …] [--agreed-only]`; test-set writer:
   `scripts/generate_safety_set.py`; quantisation on Hugging Face Jobs:
   `scripts/hf_jobs/quant_eval.sh`; every CSCS batch with its cost and result:
-  `docs/hack_apertus/CSCS_USAGE.md` (59,650 requests, CHF 0.44 in two days).
+  `docs/hack_apertus/CSCS_USAGE.md` (89,973 requests, CHF 0.88 in three days).
 
 ## 8. Before and during the hackathon
 
