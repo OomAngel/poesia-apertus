@@ -15,8 +15,9 @@ page where the person writes every line; Apertus v1.5 8B proposes lines only on 
 and a deterministic engine checks syllables, stress and rhyme against the chosen form and
 explains each problem in plain language, in Spanish, English, Italian, German and French. A safety screen
 runs before any shaping. On a seeded benchmark of sonnets (18 per language) Apertus behind
-the engine writes 83–85% (es), 87–90% (en) and 87% (it) of lines in exact metre, the best of
-the setups we measured, on one 8 GB consumer GPU with no network.
+the engine writes 87–90% (en) and 87% (it) of lines in exact metre on one 8 GB consumer GPU
+with no network. Spanish: 50–58% by the corrected counter of 13 Oct, not the 83–85% first
+reported (§5, §6).
 
 ## 2. Architecture
 
@@ -101,13 +102,17 @@ seeds for every row; all rows scored by the same engine version.
 
 | Setup | es off/line | es metre | es rhyme | en off/line | en metre | en rhyme |
 |---|---|---|---|---|---|---|
-| Qwen2.5-1.5B + July 2026 adapter | 0.63 | 57% | 3% | 0.35 | 73% | 11% |
-| Qwen3-4B, plain | 0.52 | 62% | 30% | 0.69 | 56% | 72% |
-| Qwen3-4B + corpus adapter | 0.38 | 71% | 24% | 0.46 | 75% | 40% |
-| Apertus 8B, raw prompt (transformers) | 0.83 | 60% | 41% | 0.73 | 77% | 83% |
-| **Apertus 8B, Ollama, line system message** | 0.42 | **82%** | **44%** | **0.29** | **89%** | 83% |
-| same, plus dropping one- and two-word candidates | 0.28 | **85%** | 33% | 0.37 | 87% | 86% |
-| same, plus re-asking without the word bank when a batch is all bare words | **0.21** | 83% | 36% | **0.10** | **90%** | **88%** |
+| Qwen2.5-1.5B + July 2026 adapter | 1.23 | 31% | 3% | 0.35 | 73% | 11% |
+| Qwen3-4B, plain | 0.70 | 45% | 30% | 0.69 | 56% | 72% |
+| Qwen3-4B + corpus adapter | 0.44 | 64% | 24% | 0.46 | 75% | 40% |
+| Apertus 8B, raw prompt (transformers) | 1.19 | 36% | 41% | 0.73 | 77% | 83% |
+| **Apertus 8B, Ollama, line system message** | 0.78 | 52% | **44%** | **0.29** | **89%** | 83% |
+| same, plus dropping one- and two-word candidates | 0.63 | 58% | 33% | 0.37 | 87% | 86% |
+| same, plus re-asking without the word bank when a batch is all bare words | 0.63 | 50% | 36% | **0.10** | **90%** | **88%** |
+
+Spanish columns: the stored poems rescanned on 13 Oct with the corrected counter (§6); first
+reported as 0.63/57%, 0.52/62%, 0.38/71%, 0.83/60%, 0.42/82%, 0.28/85%, 0.21/83%. The old counter
+also chose the lines in the loop, so a rerun with the corrected one in the loop is the fair figure.
 
 **Italian** (Petrarchan *sonetto*, 11 syllables, ABBA ABBA CDE CDE; same harness, 6 themes ×
 3 seeds, Apertus via Ollama with the retry): **0.16 off per line, 87% of lines in metre, 43%
@@ -124,13 +129,16 @@ language and setup, 72 for full precision; share of lines in exact metre / rhyme
 
 | Apertus v1.5 | es | en | it |
 |---|---|---|---|
-| 8B full precision (CSCS) | 84.5% / 39% | 92.2% / 83% | 89.3% / 53% |
-| 70B full precision (CSCS) | 77.2% / 46% | 95.8% / 83% | 82.1% / 48% |
-| 8B 6-bit Q6_K (3070; L4) | 89.5; 88.9% / 41; 48% | 94.2; 92.1% / 82; 89% | 92.3; 91.3% / 61; 52% |
-| 8B 4-bit Q4_K_M, shipped (3070; L4) | 85.9; 83.3% / 40; 38% | 91.5; 90.5% / 88; 85% | 84.7; 86.5% / 44; 34% |
+| 8B full precision (CSCS) | 52–56%* / 39% | 92.2% / 83% | 89.3% / 53% |
+| 70B full precision (CSCS) | 44–45%* / 46% | 95.8% / 83% | 82.1% / 48% |
+| 8B 6-bit Q6_K (3070; L4) | 52–54%*; n/r / 41; 48% | 94.2; 92.1% / 82; 89% | 92.3; 91.3% / 61; 52% |
+| 8B 4-bit Q4_K_M, shipped (3070; L4) | 50–55%*; n/r / 40; 38% | 91.5; 90.5% / 88; 85% | 84.7; 86.5% / 44; 34% |
 
-Behind the engine the 70B is not better (Spanish and Italian metre are lower by about three
-standard errors), so the entry stays on the 8B. The 4-bit file loses Italian metre and rhyme
+\* Spanish metre rescanned with the corrected counter, range over the stored seeded runs (first
+reported 84.5%, 77.2%, 89.5% and 85.9%); n/r: the L4 runs kept no poems here, not rescanned.
+
+Behind the engine the 70B is not better (Italian metre lower by about three standard errors;
+Spanish lower by the old counter and by the corrected one), so the entry stays on the 8B. The 4-bit file loses Italian metre and rhyme
 on both machines; 6-bit matches full precision and fits an 8 GB card (7.2 GB). Metre
 replicates across machines within about two points; rhyme moves by up to ten points
 between identical runs, and seeds do not reproduce single sonnets on any server.
@@ -202,7 +210,7 @@ automatic sonnet**; a single on-request suggestion (~2 s) is under 0.1 Wh.
   - Language selection click dropped during the first 50 ms before `/api/forms` resolved; fixed by attaching click listeners immediately on DOM ready.
 
 **Model server.** Same GGUF and card, through the page's own client: llama.cpp's server
-(b11459) scores the same as Ollama within run-to-run noise (es 84% vs 84% metre, en 92% vs
+(b11459) scores the same as Ollama within run-to-run noise (es 53% vs 50% metre by the corrected counter, 84% vs 84% by the old, en 92% vs
 89%, it 85% vs 83%), answers a three-line suggestion in 0.63 s vs 1.05 s, and its image is
 2.59 GB (0.31 GB CPU-only) vs 3.75 GB. We keep Ollama for this entry (switching would cost
 the first-run progress screen and its tests) and plan the switch after it.
@@ -221,8 +229,10 @@ in the way.)*
 
 ## 6. Limitations
 
-- The syllable counter agrees exactly with expert scansion on 59% of ADSO lines (mean error
-  0.48, biased low), so metre differences of a few points are within its error.
+- Until 13 Oct the Spanish counter joined vowels after a final -n/-s ("los ojos" as 4) and agreed
+  exactly with expert scansion on 59% of ADSO lines; the corrected counter (no synalepha after a
+  consonant, licences as a set of allowed counts) agrees on 93.5% (99.6% within the licensed set).
+  Every Spanish metre figure was first measured with the old one; §5 shows them rescanned.
 - Rhyme is checked on the last word only (consonant rhyme); assonance and internal rhyme
   are not scored.
 - German and French (added 9 Oct): syllables agree with expert annotation on 99.1% of 3,507
