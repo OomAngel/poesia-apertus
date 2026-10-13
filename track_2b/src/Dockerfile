@@ -4,7 +4,7 @@ FROM python:3.13-slim
 # The engine: OomAngel/poesia (MIT), pinned to the commit this entry was tested with. Every
 # dependency has a wheel or is pure Python (checked 2026-10-07 with the compiler disabled),
 # and the archive URL needs no git, so the image needs no build tools at all.
-ARG POESIA_REF=b29a13f3fcc02d6d957e7a953a090351323c703c
+ARG POESIA_REF=272955de68f41e15754d2e123fdf9d842298f6f3
 # english-scan, not english: the latter adds prosodic (planned, unused) and ~450 MB with it.
 RUN pip install --no-cache-dir \
     "poesia[web,spanish,english-scan,recitation] @ https://github.com/OomAngel/poesia/archive/${POESIA_REF}.zip"
@@ -14,6 +14,10 @@ RUN pip install --no-cache-dir \
 ENV NLTK_DATA=/usr/share/nltk_data
 RUN python -c "import nltk; [nltk.download(p, download_dir='/usr/share/nltk_data', quiet=True) for p in ('averaged_perceptron_tagger_eng', 'cmudict')]" \
  && python -c "from poesia.webapp import scan_line; print(scan_line('La luna vierte su silencio blanco', 'es', 'soneto', 0, [])['syllables'], scan_line('The restless sea in endless rhythm rolls', 'en', 'sonnet_shakespearean', 0, [])['syllables'], scan_line('Die Nacht ist still, der Mond geht leise auf', 'de', 'sonett', 0, [])['syllables'], scan_line('Le soir descend sur la ville endormie', 'fr', 'sonnet', 0, [])['syllables'])"
+
+# The page's line proposals go through the engine's loop (scorer, memoria): run one with a stub
+# model, so a missing dependency fails the build, not the page (PyYAML did, 2026-10-13).
+RUN python -c "from poesia.generation.llm_client import StubLLMClient; from poesia.webapp import propose_lines; print(len(propose_lines(StubLLMClient(), 'es', 'soneto', 2, ['Quizá ahora me cuides desde el cielo', 'como la luz que pasa entre las ramas', '', ''], 'padre', '', 3)), 'proposals')"
 
 # Read-back voices (Piper, offline), from rhasspy/piper-voices at the revision poesia.voices
 # pins: es_ES-davefx-medium (CC0), en_US-ljspeech-medium (public domain), it_IT-serena-medium
