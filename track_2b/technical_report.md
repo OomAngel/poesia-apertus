@@ -32,7 +32,9 @@ browser ----> PoesIA page (FastAPI, port 8000) ----> scansion engine (determinis
   "Ideas" first offers common words that rhyme with the line's partner, from offline word
   lists, each with why it fits (`/api/words`); whole lines from Apertus come only on a second
   click (`/api/propose`), ranked by the scan, not by model likelihood, and shown greyed until
-  used or edited. Each line records its origin; "Keep" saves text, a printable page or a file
+  used or edited. A whole draft comes only on request, as a starting point (a secondary link);
+  its lines stay marked as drafts until edited, and "next" on an empty poem does not write it.
+  Each line records its origin; "Keep" saves text, a printable page or a file
   to reopen, with the statement "N of M lines worded by the author". Drafts live in the tab.
 - **Engine** (`poesia` package, five languages): metrical syllable count with synalepha,
   mute-e and final-stress rules, stress pattern, rhyme key by sound; explanations from
@@ -172,7 +174,7 @@ detection would also make it a medical device under the EU MDR and Swiss MedDO.
 
 | | RTX 3070 8 GB | CPU only (Ryzen 9 5900X, Docker Desktop) |
 |---|---|---|
-| rhyme words (word lists, no model) | ≤0.6 s first per language, then instant | same |
+| rhyme words (word lists, no model) | at most 0.6 s first per language, then instant | same |
 | a suggestion (6 candidates generated, best 3 shown) | 1.4–5 s | 13–15 s |
 | safety screen | <1 s | 2.0 s |
 | linking (embed + search) | 3.1 s | 3.2 s |
