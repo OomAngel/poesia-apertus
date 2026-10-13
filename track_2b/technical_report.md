@@ -186,13 +186,15 @@ loop) takes ~35 s on the GPU. Energy, GPU board only
 automatic sonnet**; a single on-request suggestion (~2 s) is under 0.1 Wh.
 
 **Accessibility, responsive layout, and user journeys** (`ux-audit`, our open browser-driven audit library, and Playwright):
+
+
 - **WCAG 2.2 AA Conformance:** all page controls pass mechanically decidable checks (accessible names, contrast, touch targets $\ge 24\text{px}$, single `h1`, announced error containers);
 - **Responsive Layout:** zero horizontal overflow across phone (390px), tablet (768px), and desktop (1024px+); zero controls below the iOS Safari 16px auto-zoom threshold;
 - **Keyboard Navigation:** keyboard users reach and initiate the writing workflow strictly via `Tab` and `Enter` without requiring pointer input;
 - **Persistence:** reflection, theme, and written lines survive page reloads and tab interruptions via `sessionStorage`;
 - **End-to-End User Journeys** (automated in `tests/test_webui_ux_journey.py`):
-  1. *Skipping Step 3 (Optional flow):* Selecting Spanish sonnet, entering theme/reflection, skipping manual line writing, automatically drafting all 14 endecasílabos with Apertus on-the-fly, and reciting via Piper TTS (cost: 5 interactions, 0 failures, 23.7 s);
-  2. *Thoughts per stanza with 1-click compose:* Entering optional thoughts into the 4 stanza containers, clicking *«Componer poema completo con IA»*, generating 14 verses matching the thoughts, and reciting via Piper TTS (cost: 9 interactions, 0 failures, 18.8 s).
+  1. *An empty poem is not written for the person:* Spanish sonnet, theme and reflection, then "next" with no lines: the page stays on Step 3 and says how to start; no line is drafted unasked (cost: 4 interactions, 0 failures, 2.9 s);
+  2. *Thoughts per stanza, then a draft as a starting point:* optional thoughts in the 4 stanza fields, the secondary link *«Borrador de todos los versos, como punto de partida»*, 14 lines that stay marked as drafts until edited, then Step 4 and read-back by Piper (cost: 9 interactions, 0 failures, 20.9 s). Both run against the deployed page (Apertus v1.5 8B on CSCS), 2026-10-13.
 - **Defects found and fixed during the audits:**
   - Revealing the next stanza redrew the page 350 ms after typing, stealing focus from fast typing; fixed by appending newly revealed stanzas rather than redrawing;
   - Changing the form silently cleared the lines; now prompts for confirmation;
