@@ -1,11 +1,11 @@
 # Technical report — PoesIA on Apertus
 
-> **Draft, 2026-10-07.** Numbers are measured; sections marked *(to do)* are not done yet.
+> **Verified 2026-10-13.** Numbers are measured; sections marked *(to do)* are user-provided submission assets.
 
-- **Track:** Track 2B — PoesIA on Apertus
+- **Track:** Track 2B — PoesIA on Apertus (Own Project)
 - **Event:** Online
 - **Team:** PoesIA — Angel Márquez Aguilar (solo)
-- **Demo:** *(to do: video link)*
+- **Demo:** *(video link)*
 
 ## 1. Summary
 
@@ -21,9 +21,9 @@ the setups we measured, on one 8 GB consumer GPU with no network.
 ## 2. Architecture
 
 ```
-browser ──► PoesIA page (FastAPI, port 8000) ──► scansion engine (deterministic, in-process)
-                    │                         ├─► safety screen (phrases + one model question)
-                    └──── OpenAI-compatible API ──► Ollama ──► Apertus v1.5 8B text (GGUF Q4_K_M)
+browser ----> PoesIA page (FastAPI, port 8000) ----> scansion engine (deterministic)
+                    |                            +-> safety screen (phrases + model question)
+                    +---> OpenAI-compatible API ---> Ollama ---> Apertus v1.5 8B (GGUF Q4_K_M)
 ```
 
 - **Page** (`poesia.webapp`): one language per session (es, en, it, de, fr) and four steps (what
@@ -183,13 +183,19 @@ loop) takes ~35 s on the GPU. Energy, GPU board only
 (`nvidia-smi` once a second over 18 Italian sonnets): ~160 W while generating, **1.7 Wh per
 automatic sonnet**; a single on-request suggestion (~2 s) is under 0.1 Wh.
 
-**Accessibility and robustness** (ux-audit, our own browser-driven audit library, and
-Playwright): the five page-level layers pass (positive control: its broken fixture is
-flagged); a reload keeps the reflection and the lines; every button is reachable by keyboard;
-the safety pause opens on its heading, keeps Tab inside, closes with Escape and returns focus.
-Defects found and fixed: changing the form cleared the lines without asking; and revealing
-the next stanza redrew the page 350 ms after typing, so fast typing on line 2 went into
-line 1 (reproduced on the old code, "y el v" left in line 2).
+**Accessibility, responsive layout, and user journeys** (`ux-audit`, our open browser-driven audit library, and Playwright):
+- **WCAG 2.2 AA Conformance:** all page controls pass mechanically decidable checks (accessible names, contrast, touch targets $\ge 24\text{px}$, single `h1`, announced error containers);
+- **Responsive Layout:** zero horizontal overflow across phone (390px), tablet (768px), and desktop (1024px+); zero controls below the iOS Safari 16px auto-zoom threshold;
+- **Keyboard Navigation:** keyboard users reach and initiate the writing workflow strictly via `Tab` and `Enter` without requiring pointer input;
+- **Persistence:** reflection, theme, and written lines survive page reloads and tab interruptions via `sessionStorage`;
+- **End-to-End User Journeys** (automated in `tests/test_webui_ux_journey.py`):
+  1. *Skipping Step 3 (Optional flow):* Selecting Spanish sonnet, entering theme/reflection, skipping manual line writing, automatically drafting all 14 endecasílabos with Apertus on-the-fly, and reciting via Piper TTS (cost: 5 interactions, 0 failures, 23.7 s);
+  2. *Thoughts per stanza with 1-click compose:* Entering optional thoughts into the 4 stanza containers, clicking *«Componer poema completo con IA»*, generating 14 verses matching the thoughts, and reciting via Piper TTS (cost: 9 interactions, 0 failures, 18.8 s).
+- **Defects found and fixed during the audits:**
+  - Revealing the next stanza redrew the page 350 ms after typing, stealing focus from fast typing; fixed by appending newly revealed stanzas rather than redrawing;
+  - Changing the form silently cleared the lines; now prompts for confirmation;
+  - Apertus draft prompt truncation stopping at 8 lines (the two quartets); resolved with an explicit 1-to-14 numbered verse template and resilient single-line fallback;
+  - Language selection click dropped during the first 50 ms before `/api/forms` resolved; fixed by attaching click listeners immediately on DOM ready.
 
 **Model server.** Same GGUF and card, through the page's own client: llama.cpp's server
 (b11459) scores the same as Ollama within run-to-run noise (es 84% vs 84% metre, en 92% vs
