@@ -15,9 +15,9 @@ page where the person writes every line; Apertus v1.5 8B proposes lines only on 
 and a deterministic engine checks syllables, stress and rhyme against the chosen form and
 explains each problem in plain language, in Spanish, English, Italian, German and French. A safety screen
 runs before any shaping. On a seeded benchmark of sonnets (18 per language) Apertus behind
-the engine writes 87–90% (en) and 87% (it) of lines in exact metre on one 8 GB consumer GPU
-with no network. Spanish: 50–58% by the corrected counter of 13 Oct, not the 83–85% first
-reported (§5, §6).
+the engine writes 83% (es), 87–90% (en) and 87% (it) of lines in exact metre, on one 8 GB
+consumer GPU with no network. The Spanish figure is from a rerun on 14 Oct with the corrected
+syllable counter (§5, §6); the first 83–85% came from a counter that miscounted.
 
 ## 2. Architecture
 
@@ -110,9 +110,11 @@ seeds for every row; all rows scored by the same engine version.
 | same, plus dropping one- and two-word candidates | 0.63 | 58% | 33% | 0.37 | 87% | 86% |
 | same, plus re-asking without the word bank when a batch is all bare words | 0.63 | 50% | 36% | **0.10** | **90%** | **88%** |
 
-Spanish columns: the stored poems rescanned on 13 Oct with the corrected counter (§6); first
+**Rerun, corrected counter in the loop** (Apertus 8B on CSCS, 14 Oct, 2 × 18 sonnets): Spanish
+0.19 off per line, **83% of lines in exact metre**, 71% of rhyme pairs.
+Rows above, Spanish columns: the stored poems rescanned on 13 Oct with the corrected counter (§6); first
 reported as 0.63/57%, 0.52/62%, 0.38/71%, 0.83/60%, 0.42/82%, 0.28/85%, 0.21/83%. The old counter
-also chose the lines in the loop, so a rerun with the corrected one in the loop is the fair figure.
+also chose the lines, which is why the rescanned rows fall and the rerun does not.
 
 **Italian** (Petrarchan *sonetto*, 11 syllables, ABBA ABBA CDE CDE; same harness, 6 themes ×
 3 seeds, Apertus via Ollama with the retry): **0.16 off per line, 87% of lines in metre, 43%
