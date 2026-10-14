@@ -116,6 +116,15 @@ Rows above, Spanish columns: the stored poems rescanned on 13 Oct with the corre
 reported as 0.63/57%, 0.52/62%, 0.38/71%, 0.83/60%, 0.42/82%, 0.28/85%, 0.21/83%. The old counter
 also chose the lines, which is why the rescanned rows fall and the rerun does not.
 
+**Above the line** (`poem_scorecard.py`: rhyme pair, stanza, whole poem; LaBSE, centred; 120 human
+poems and 36 of the 8B's per language, es/it/de/fr): the 8B is near the poets on metre but rhymes on
+near copies 2–3x as often, repeats 3x as many content words per poem (4.1–7.3 vs 1.3–2.8), and its
+stanzas restate each other (centred similarity of consecutive stanzas 0.58–0.64 vs 0.18–0.25). A
+sense-first rule in the line prompt cut repeated words per poem by 4–24% and end-word concentration in
+all four languages, with metre unchanged; stanza-to-stanza development did not move. No judge we
+could run ranks sense: Apertus 70B rejects shuffled lines (8% pass) but passes the 8B's lines as often
+as the poets' (90%).
+
 **Italian** (Petrarchan *sonetto*, 11 syllables, ABBA ABBA CDE CDE; same harness, 6 themes ×
 3 seeds, Apertus via Ollama with the retry): **0.16 off per line, 87% of lines in metre, 43%
 of rhyme pairs**.
