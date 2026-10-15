@@ -6,7 +6,7 @@
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 # The engine at the commit this entry was tested with (same as src/Dockerfile).
-$ref = "8ef3e0dca091c72b83574cee2a36c5856e0b3f90"
+$ref = "2724de915c2de20b8eda198bead7b07446ed2fe6"
 if (-not (Get-Command uvx -ErrorAction SilentlyContinue)) {
     Write-Host "uv is missing. Install it with:"
     Write-Host '  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"'
