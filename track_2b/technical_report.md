@@ -1,6 +1,6 @@
 # Technical report — PoesIA on Apertus
 
-> **Verified 2026-10-13.** Numbers are measured; sections marked *(to do)* are user-provided submission assets.
+> **Verified 2026-10-15.** Every number is measured; the files behind each are in the engine repository (`reports/eval_2026-10/`).
 
 - **Track:** Track 2B — PoesIA on Apertus (Own Project)
 - **Event:** Online
@@ -89,7 +89,7 @@ infrastructure in Switzerland: an option for a canton or hospital without GPUs o
 - **Safety test set** (`data/safety` in the engine repository; dataset card there):
   60 synthetic reflections, 12 per language (es, en, de, fr, it): 20 ordinary, 20 sad but
   safe (grief, loneliness, autumn), 20 with a risk signal. No real person's text.
-  *(to do: publish on Hugging Face with the organisers' template.)*
+  It is a regression test, not a validation (one author wrote both the screen and the set).
 - **Evaluation gold** for the syllable counter: ADSO, 100 Spanish poems scanned by experts
   (CC BY-NC 4.0), used only to measure the counter.
 
@@ -242,8 +242,8 @@ dead."); for the Spanish version, Rosalía de Castro ("Moría el sol, y las marc
 1.5 s with one word wrong (*parte* for *padre*); 7.5 GB of 8 GB reserved, so it is not in the
 default deployment.
 
-**People:** *(to do: 2–3 tester sessions — did you finish, does it feel like yours, what got
-in the way.)*
+**People:** no outside tester sessions took place before the deadline. The page was tested by
+its author and by scripted journeys only, so ease of use for a first-time writer is unmeasured.
 
 ## 6. Limitations
 
@@ -325,4 +325,17 @@ Creative Commons Attribution 4.0 (CC-BY-4.0). All HackApertus projects are open-
 
 ## References
 
-*(to do: from the engine repository's `docs/hack_apertus/refs.bib`, once validated.)*
+- Fancourt, D., & Finn, S. (2019). *What is the evidence on the role of the arts in improving health and well-being? A scoping review* (Health Evidence Network Synthesis Report 67). WHO Regional Office for Europe. ISBN 978-92-890-5455-3.
+- Frattaroli, J. (2006). Experimental disclosure and its moderators: A meta-analysis. *Psychological Bulletin, 132*(6), 823–865. https://doi.org/10.1037/0033-2909.132.6.823
+- Haider, T. (2024). A large annotated reference corpus of New High German poetry. In *Proceedings of LREC-COLING 2024*. https://aclanthology.org/2024.lrec-main.59
+- Hutiri, W., Papakyriakopoulos, O., & Xiang, A. (2024). Not my voice! A taxonomy of ethical and safety harms of speech generators. In *Proceedings of FAccT '24*. https://doi.org/10.1145/3630106.3658911
+- McBain, R. K., Cantor, J. H., Zhang, L. A., et al. (2025). Evaluation of alignment between large language models and expert clinicians in suicide risk assessment. *Psychiatric Services*. https://doi.org/10.1176/appi.ps.20250086
+- Moore, J., Grabb, D., Agnew, W., Klyman, K., Chancellor, S., Ong, D. C., & Haber, N. (2025). Expressing stigma and inappropriate responses prevents LLMs from safely replacing mental health providers. In *Proceedings of FAccT '25*. https://doi.org/10.1145/3715275.3732039
+- Pennebaker, J. W., & Beall, S. K. (1986). Confronting a traumatic event: Toward an understanding of inhibition and disease. *Journal of Abnormal Psychology, 95*(3), 274–281. https://doi.org/10.1037/0021-843X.95.3.274
+- Project Apertus, Hernández-Cano, A., Hägele, A., et al. (2025). *Apertus: Democratizing open and compliant LLMs for global language environments*. arXiv:2509.14233. https://doi.org/10.48550/arXiv.2509.14233
+- de la Rosa, J., Pérez Pozo, Á., Ros, S., & González-Blanco, E. (2023). *ALBERTI, a multilingual domain specific language model for poetry analysis*. arXiv:2307.01387. https://doi.org/10.48550/arXiv.2307.01387
+- Ruiz Fabo, P., Alonso Pérez, A., Rodríguez Fernández, P., & Gamallo, P. (2026). Automatic metrical scansion of poetry in a low-resource setting. In *Proceedings of the LLMs4SSH Workshop*. https://aclanthology.org/2026.llms4ssh-1.12/
+- Schweizerisches Gesundheitsobservatorium (Obsan). (2024). *Psychische Gesundheit – Kennzahlen 2022* (Obsan Bulletin 11/2024). https://www.obsan.admin.ch/sites/default/files/2024-11/obsan_bulletin_2024_11_d.pdf
+- Bundesamt für Statistik (BFS). (2023). *Schweizerische Gesundheitsbefragung 2022* [Press release]. https://www.admin.ch/gov/de/start/dokumentation/medienmitteilungen.msg-id-98449.html
+- Smyth, J. M. (1998). Written emotional expression: Effect sizes, outcome types, and moderating variables. *Journal of Consulting and Clinical Psychology, 66*(1), 174–184. https://doi.org/10.1037/0022-006X.66.1.174
+- World Health Organization. (2025, June 30). *Social connection linked to improved health and reduced risk of early death* [News release]. https://www.who.int/news/item/30-06-2025-social-connection-linked-to-improved-heath-and-reduced-risk-of-early-death
