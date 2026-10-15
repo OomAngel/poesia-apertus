@@ -125,6 +125,13 @@ all four languages, with metre unchanged; stanza-to-stanza development did not m
 could run ranks sense: Apertus 70B rejects shuffled lines (8% pass) but passes the 8B's lines as often
 as the poets' (90%).
 
+**A line adapter trained on poets' lines** (QLoRA on Kaggle 2 x T4, fp32, 10,242 lines from real
+poems in the page's exact request, capped openings and end words; 4-bit, same benchmark): stanzas
+restate each other less (0.55–0.66 -> 0.40–0.42) and repeat fewer words, and Spanish/Italian metre
+rose (86 -> 93%, 83 -> 96%), but the judge passed fewer of its lines as sense (es 93 -> 68%), because
+it learned to stop mid-clause from enjambed verse and its word choice loosened. Not adopted: the
+entry ships the plain model. The next round trains only on clause-closing lines.
+
 **Italian** (Petrarchan *sonetto*, 11 syllables, ABBA ABBA CDE CDE; same harness, 6 themes ×
 3 seeds, Apertus via Ollama with the retry): **0.16 off per line, 87% of lines in metre, 43%
 of rhyme pairs**.
