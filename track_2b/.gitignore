@@ -25,3 +25,6 @@ build/
 .DS_Store
 .idea/
 .vscode/
+
+# Demo screen footage (local only)
+video_footage/
