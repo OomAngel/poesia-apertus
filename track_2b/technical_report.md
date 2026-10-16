@@ -5,7 +5,7 @@
 - **Track:** Track 2B — PoesIA on Apertus (Own Project)
 - **Event:** Online
 - **Team:** PoesIA — Angel Márquez Aguilar (solo)
-- **Demo:** 2-minute video, linked in the submission form; code at https://github.com/OomAngel/poesia-apertus
+- **Demo:** https://youtu.be/P4T0PgHf3dk (2 minutes); code at https://github.com/OomAngel/poesia-apertus
 
 ## 1. Summary
 
