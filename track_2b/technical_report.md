@@ -5,9 +5,18 @@
 - **Track:** Track 2B — PoesIA on Apertus (Own Project)
 - **Event:** Online
 - **Team:** PoesIA — Angel Márquez Aguilar (solo)
-- **Demo:** *(video link)*
+- **Demo:** 2-minute video, linked in the submission form; code at https://github.com/OomAngel/poesia-apertus
 
 ## 1. Summary
+
+**Why it matters.** In the Swiss Health Survey 2022, 9.8% of people report moderate-to-severe
+depression symptoms (8.6% in 2017; the rise is driven by women aged 15–34, +62.7%) and 6.3%
+moderate-to-severe anxiety symptoms (20.8% mild), while 7.8% were in treatment for psychological
+problems in the past year (Obsan 2024). Expressive writing is a low-threshold self-help practice
+with a small but consistent benefit across 146 randomised studies (Frattaroli 2006), and the WHO
+evidence review supports creative expression for well-being (Fancourt & Finn 2019). PoesIA is not
+therapy and does not diagnose: it makes that practice approachable, privately, and pauses with
+Swiss helplines (143, 147) when a reflection shows signs of crisis.
 
 People write when something moves them, and many would like to shape it into a poem, but
 form is hard to learn and AI writing tools take the words away from them. PoesIA is a local
